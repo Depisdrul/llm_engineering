@@ -1,0 +1,64 @@
+---
+title: {{ title }}
+topics: {{ topics }}
+difficulty: {{ difficulty }}
+{% if prerequisites %}prerequisites: {{ prerequisites }}{% endif %}
+weeks: {{ weeks }}
+last_updated: {{ last_updated }}
+source: LLM Engineering Course - Ed Donner
+course_url: https://edwarddonner.com/
+---
+
+# {{ title }}
+
+## Overview
+
+{{ overview }}
+
+## Core Concepts
+
+{{ core_concepts }}
+
+{% if implementation_patterns %}
+## Implementation Patterns
+
+{{ implementation_patterns }}
+{% endif %}
+
+{% if common_challenges %}
+## Common Challenges
+
+{{ common_challenges }}
+{% endif %}
+
+{% if business_applications %}
+## Business Applications
+
+{{ business_applications }}
+{% endif %}
+
+{% if troubleshooting %}
+## Troubleshooting
+
+{{ troubleshooting }}
+{% endif %}
+
+## Related Topics
+
+{% for topic in related_topics %}
+- [{{ topic.name }}]({{ topic.path }})
+{% endfor %}
+
+## Week References
+
+{% for week_ref in week_references %}
+- {{ week_ref }}
+{% endfor %}
+
+{% if resources %}
+## Resources
+
+{% for resource in resources %}
+- [{{ resource.name }}]({{ resource.url }})
+{% endfor %}
+{% endif %}

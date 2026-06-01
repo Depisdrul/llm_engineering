@@ -1,0 +1,48 @@
+---
+title: {{ title }}
+type: cheatsheet
+topics: {{ topics }}
+last_updated: {{ last_updated }}
+---
+
+# {{ title }}
+
+{% if five_min_setup %}
+## 5-Minute Setup
+
+```python
+{{ five_min_setup }}
+```
+{% endif %}
+
+## Common Tasks
+
+{% for task in common_tasks %}
+### Q: {{ task.question }}
+
+{% if task.code %}
+```python
+{{ task.code }}
+```
+{% endif %}
+
+{{ task.answer }}
+{% endfor %}
+
+{% if gotchas %}
+## Gotchas
+
+{% for gotcha in gotchas %}
+- ⚠️ {{ gotcha }}
+{% endfor %}
+{% endif %}
+
+{% if costs %}
+## Model Costs
+
+{{ costs }}
+{% endif %}
+
+## Deep Dive
+
+→ See [{{ main_topic_title }}]({{ main_topic_path }}) for comprehensive guide

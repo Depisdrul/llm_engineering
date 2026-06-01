@@ -1,0 +1,152 @@
+topics:
+  - id: llm-apis
+    name: LLM APIs & Integration
+    category: foundations
+    folder: 01-foundations
+    description: OpenAI, Anthropic, Gemini API patterns, authentication, error handling
+    weeks: [1, 2]
+
+  - id: prompt-engineering
+    name: Prompt Engineering
+    category: core-concepts
+    folder: 02-core-concepts
+    description: System/user prompts, conversation history, streaming, prompt caching
+    weeks: [1, 2, 3, 4, 5]
+
+  - id: dev-tools
+    name: Development Tools
+    category: foundations
+    folder: 01-foundations
+    description: Jupyter, debugging, environment setup, git workflows
+    weeks: [1]
+
+  - id: model-selection
+    name: Model Selection & Comparison
+    category: core-concepts
+    folder: 02-core-concepts
+    description: Model capabilities, pricing, reasoning vs chat, temperature
+    weeks: [2, 3]
+
+  - id: tokenization
+    name: Tokenization & Context
+    category: core-concepts
+    folder: 02-core-concepts
+    description: Token counting, context windows, tiktoken, encoding formats
+    weeks: [1, 2]
+
+  - id: multi-model
+    name: Multi-Model Orchestration
+    category: integration
+    folder: 03-integration
+    description: LiteLLM, LangChain, OpenRouter, Ollama integration
+    weeks: [2, 3]
+
+  - id: rag-systems
+    name: RAG Systems
+    category: rag
+    folder: 04-rag
+    description: Vector databases, embeddings, retrievers, semantic search, chunking
+    weeks: [5]
+
+  - id: embeddings
+    name: Embeddings
+    category: rag
+    folder: 04-rag
+    description: HuggingFace embeddings, vector representations, similarity search
+    weeks: [2, 5, 8]
+
+  - id: vector-databases
+    name: Vector Databases
+    category: rag
+    folder: 04-rag
+    description: Chroma, FAISS, persistence, retrieval strategies
+    weeks: [5]
+
+  - id: agent-architectures
+    name: Agent Architectures
+    category: agents
+    folder: 05-agents
+    description: Tool use, function calling, multi-agent systems, autonomous planning
+    weeks: [8]
+
+  - id: tool-use
+    name: Tool Use & Function Calling
+    category: agents
+    folder: 05-agents
+    description: OpenAI tools, function calling patterns, structured outputs
+    weeks: [8]
+
+  - id: multi-agent
+    name: Multi-Agent Systems
+    category: agents
+    folder: 05-agents
+    description: Agent collaboration, coordination, frameworks (CrewAI, AutoGen, LangGraph)
+    weeks: [8]
+
+  - id: fine-tuning
+    name: Fine-Tuning & Training
+    category: training
+    folder: 06-training
+    description: QLoRA, PEFT, LoRA, dataset preparation, training loops
+    weeks: [6, 7]
+
+  - id: dataset-prep
+    name: Dataset Preparation
+    category: training
+    folder: 06-training
+    description: Data curation, preprocessing, stratified sampling, deduplication
+    weeks: [6]
+
+  - id: evaluation
+    name: Evaluation & Metrics
+    category: training
+    folder: 06-training
+    description: Model evaluation, baselines, metrics, benchmarking
+    weeks: [6, 7]
+
+  - id: gpu-computing
+    name: GPU Computing
+    category: gpu
+    folder: 07-gpu
+    description: CUDA, model loading, inference optimization, Colab GPU
+    weeks: [3, 6, 7]
+
+  - id: deployment
+    name: Production Deployment
+    category: production
+    folder: 08-production
+    description: Modal.com, containerization, API endpoints, scaling, cost optimization
+    weeks: [8]
+
+  - id: ui-interaction
+    name: UI & Interaction
+    category: production
+    folder: 08-production
+    description: Gradio interfaces, chatbots, streaming responses, conversational AI
+    weeks: [5, 8]
+
+categories:
+  foundations:
+    name: "Foundation Topics"
+    order: 1
+  core-concepts:
+    name: "Core LLM Concepts"
+    order: 2
+  integration:
+    name: "Integration & Orchestration"
+    order: 3
+  rag:
+    name: "RAG Systems"
+    order: 4
+  agents:
+    name: "Agent Architectures"
+    order: 5
+  training:
+    name: "Fine-Tuning & Training"
+    order: 6
+  gpu:
+    name: "GPU Computing"
+    order: 7
+  production:
+    name: "Production & Deployment"
+    order: 8
