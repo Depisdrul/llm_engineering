@@ -4,12 +4,9 @@
     {
       "label": "UV: Check Environment Health",
       "type": "shell",
-      "command": "powershell",
+      "command": "python",
       "args": [
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/.vscode/check-env.ps1"
+        "${workspaceFolder}/.vscode/check-env.py"
       ],
       "presentation": {
         "reveal": "silent",
@@ -63,6 +60,20 @@
       "presentation": {
         "reveal": "always",
         "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Kill Gradio Processes",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/kill-gradio.py"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
       },
       "problemMatcher": []
     },

@@ -14,6 +14,7 @@
 Visit [https://ollama.com](https://ollama.com) and download for Windows.
 
 Or via command line:
+
 ```powershell
 winget install Ollama.Ollama
 ```
@@ -23,21 +24,25 @@ winget install Ollama.Ollama
 Choose one based on your hardware:
 
 **Fast & Lightweight** (Recommended for most computers):
+
 ```powershell
 ollama pull llama3.2
 ```
 
 **Better Quality** (If you have 8GB+ RAM):
+
 ```powershell
 ollama pull qwen2.5
 ```
 
 **Best for Code** (7B model):
+
 ```powershell
 ollama pull mistral
 ```
 
 **Most Capable** (If you have 16GB+ RAM):
+
 ```powershell
 ollama pull llama3.1:8b
 ```
@@ -68,7 +73,7 @@ python .knowledge-extraction\extract_all.py --use-llm --provider ollama --weeks 
 ## Model Comparison
 
 | Model | Size | Speed | Quality | Best For |
-|-------|------|-------|---------|----------|
+| ----- | ---- | ----- | ------- | -------- |
 | llama3.2 | 3B | ⚡⚡⚡ | ⭐⭐⭐ | General use, fast |
 | qwen2.5 | 7B | ⚡⚡ | ⭐⭐⭐⭐ | Better reasoning |
 | mistral | 7B | ⚡⚡ | ⭐⭐⭐⭐ | Code & technical |
@@ -92,6 +97,7 @@ python .knowledge-extraction\extract_all.py --use-llm --provider ollama --weeks 
 ### If Extraction is Slow
 
 Don't worry! Even on slower hardware:
+
 - Extract one week at a time: `--weeks 1`
 - Run overnight for full extraction
 - Quality is the same, just takes longer
@@ -101,11 +107,13 @@ Don't worry! Even on slower hardware:
 ### "Connection refused" error
 
 Ollama service isn't running. Start it:
+
 ```powershell
 ollama serve
 ```
 
 Or check if it's running:
+
 ```powershell
 Get-Process ollama
 ```
@@ -113,6 +121,7 @@ Get-Process ollama
 ### Model not found
 
 Pull the model first:
+
 ```powershell
 ollama pull llama3.2
 ```
@@ -120,6 +129,7 @@ ollama pull llama3.2
 ### Out of memory
 
 Use a smaller model:
+
 ```powershell
 ollama pull llama3.2  # Only 3B parameters
 python .knowledge-extraction\extract_all.py --use-llm --provider ollama --model llama3.2
@@ -164,6 +174,7 @@ python .knowledge-extraction\extract_all.py --use-llm --provider ollama --model 
 **Bottom Line**: Start with Ollama + llama3.2. It's free, works offline, and quality is excellent for this use case. You can always try paid APIs later if you want even better summaries.
 
 **Command to remember**:
+
 ```powershell
 ollama pull llama3.2
 python .knowledge-extraction\extract_all.py --use-llm --provider ollama
