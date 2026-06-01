@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
-from IPython.display import display, SVG
+
+from IPython.display import SVG, display
 
 
 def tag(el):

@@ -49,7 +49,7 @@ def _os_block():
     if sysname == "Linux":
         # Best-effort parse of /etc/os-release
         try:
-            with open("/etc/os-release", "r") as f:
+            with open("/etc/os-release") as f:
                 data = {}
                 for line in f:
                     if "=" in line:
@@ -64,7 +64,7 @@ def _os_block():
     wsl = False
     if sysname != "Windows":
         try:
-            with open("/proc/version", "r") as f:
+            with open("/proc/version") as f:
                 v = f.read().lower()
                 wsl = ("microsoft" in v) or ("wsl" in v)
         except Exception:
@@ -150,7 +150,7 @@ def _cpu_block():
         try:
             # Count unique "core id" per physical id
             mapping = _run("LC_ALL=C lscpu -p=CORE,SOCKET | grep -v '^#'").splitlines()
-            unique = set(tuple(line.split(",")) for line in mapping if "," in line)
+            unique = {tuple(line.split(",")) for line in mapping if "," in line}
             cores_physical = len(unique) or 0
         except Exception:
             cores_physical = 0

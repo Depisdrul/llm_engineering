@@ -12,7 +12,7 @@ MODEL_NAME = "meta-llama/Llama-3.2-3B"
 
 @app.function(image=image, secrets=secrets, gpu=GPU, timeout=1800)
 def generate(prompt: str) -> str:
-    from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed
+    from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     tokenizer.pad_token = tokenizer.eos_token

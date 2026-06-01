@@ -1,0 +1,83 @@
+{
+  // Python settings
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+
+  // Linting with Ruff
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // Disable old linting system (use Ruff instead)
+  "python.linting.enabled": false,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": false,
+  "python.linting.mypyEnabled": false,
+
+  // Python language server settings
+  "python.languageServer": "Pylance",
+
+  // Disable IntelliCode if it causes issues
+  "vsintellicode.python.completionsEnabled": false,
+
+  // Ruff configuration
+  "ruff.enable": true,
+  "ruff.organizeImports": true,
+  "ruff.fixAll": true,
+  "ruff.lint.run": "onType",
+
+  // Notebook settings
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // File associations
+  "files.associations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+
+  // Exclude community contributions from search/file watching
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/community-contributions": true
+  },
+  "search.exclude": {
+    "**/community-contributions": true,
+    "**/.venv": true,
+    "**/node_modules": true
+  },
+  "files.watcherExclude": {
+    "**/community-contributions/**": true,
+    "**/.venv/**": true
+  },
+
+  // Task automation
+  "task.allowAutomaticTasks": "on",
+
+  // Markdown linting
+  "markdownlint.config": {
+    "MD033": false,
+    "MD041": false,
+    "MD013": {
+      "line_length": 120,
+      "tables": false,
+      "code_blocks": false
+    }
+  },
+  "markdownlint.run": "onType",
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "davidanson.vscode-markdownlint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": "explicit"
+    },
+    "files.trimTrailingWhitespace": true
+  }
+}

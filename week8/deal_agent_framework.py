@@ -1,14 +1,14 @@
+import json
+import logging
 import os
 import sys
-import logging
-import json
-from typing import List
-from dotenv import load_dotenv
+
 import chromadb
-from agents.planning_agent import PlanningAgent
-from agents.deals import Opportunity
-from sklearn.manifold import TSNE
 import numpy as np
+from agents.deals import Opportunity
+from agents.planning_agent import PlanningAgent
+from dotenv import load_dotenv
+from sklearn.manifold import TSNE
 
 load_dotenv(override=True)
 
@@ -62,9 +62,9 @@ class DealAgentFramework:
             self.planner = PlanningAgent(self.collection)
             self.log("Agent Framework is ready")
 
-    def read_memory(self) -> List[Opportunity]:
+    def read_memory(self) -> list[Opportunity]:
         if os.path.exists(self.MEMORY_FILENAME):
-            with open(self.MEMORY_FILENAME, "r") as file:
+            with open(self.MEMORY_FILENAME) as file:
                 data = json.load(file)
             opportunities = [Opportunity(**item) for item in data]
             return opportunities
@@ -79,7 +79,7 @@ class DealAgentFramework:
     def reset_memory(cls) -> None:
         data = []
         if os.path.exists(cls.MEMORY_FILENAME):
-            with open(cls.MEMORY_FILENAME, "r") as file:
+            with open(cls.MEMORY_FILENAME) as file:
                 data = json.load(file)
         truncated = data[:2]
         with open(cls.MEMORY_FILENAME, "w") as file:
@@ -89,7 +89,7 @@ class DealAgentFramework:
         text = BG_BLUE + WHITE + "[Agent Framework] " + message + RESET
         logging.info(text)
 
-    def run(self) -> List[Opportunity]:
+    def run(self) -> list[Opportunity]:
         self.init_agents_as_needed()
         logging.info("Kicking off Planning Agent")
         result = self.planner.plan(memory=self.memory)

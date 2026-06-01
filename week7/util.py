@@ -1,13 +1,13 @@
+import math
 import re
-from sklearn.metrics import mean_squared_error, r2_score
+from itertools import accumulate
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from itertools import accumulate
-import math
-from tqdm.auto import tqdm
 from IPython.display import clear_output
-
+from sklearn.metrics import mean_squared_error, r2_score
+from tqdm.auto import tqdm
 
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
@@ -77,7 +77,7 @@ class Tester:
         # Pre-format hover text
         df["hover"] = [
             f"{t}\nGuess=${g:,.2f} Actual=${y:,.2f}"
-            for t, g, y in zip(df["title"], df["guess"], df["truth"])
+            for t, g, y in zip(df["title"], df["guess"], df["truth"], strict=False)
         ]
 
         max_val = float(max(df["truth"].max(), df["guess"].max()))
@@ -107,7 +107,7 @@ class Tester:
                 x=[0, max_val],
                 y=[0, max_val],
                 mode="lines",
-                line=dict(width=2, dash="dash", color="deepskyblue"),
+                line={"width": 2, "dash": "dash", "color": "deepskyblue"},
                 name="y = x",
                 hoverinfo="skip",
                 showlegend=False,
@@ -125,18 +125,18 @@ class Tester:
         # Running mean and std (pure Python)
         running_sums = list(accumulate(self.errors))
         x = list(range(1, n + 1))
-        running_means = [s / i for s, i in zip(running_sums, x)]
+        running_means = [s / i for s, i in zip(running_sums, x, strict=False)]
 
         running_squares = list(accumulate(e * e for e in self.errors))
         running_stds = [
             math.sqrt((sq_sum / i) - (mean**2)) if i > 1 else 0
-            for i, sq_sum, mean in zip(x, running_squares, running_means)
+            for i, sq_sum, mean in zip(x, running_squares, running_means, strict=False)
         ]
 
         # 95% confidence interval for mean
-        ci = [1.96 * (sd / math.sqrt(i)) if i > 1 else 0 for i, sd in zip(x, running_stds)]
-        upper = [m + c for m, c in zip(running_means, ci)]
-        lower = [m - c for m, c in zip(running_means, ci)]
+        ci = [1.96 * (sd / math.sqrt(i)) if i > 1 else 0 for i, sd in zip(x, running_stds, strict=False)]
+        upper = [m + c for m, c in zip(running_means, ci, strict=False)]
+        lower = [m - c for m, c in zip(running_means, ci, strict=False)]
 
         # Title with final stats
         final_mean = running_means[-1]
@@ -153,7 +153,7 @@ class Tester:
                 y=upper + lower[::-1],
                 fill="toself",
                 fillcolor="rgba(128,128,128,0.2)",
-                line=dict(color="rgba(255,255,255,0)"),
+                line={"color": "rgba(255,255,255,0)"},
                 hoverinfo="skip",
                 showlegend=False,
                 name="95% CI",
@@ -166,7 +166,7 @@ class Tester:
                 x=x,
                 y=running_means,
                 mode="lines",
-                line=dict(width=3, color="firebrick"),
+                line={"width": 3, "color": "firebrick"},
                 name="Cumulative Avg Error",
                 customdata=list(
                     zip(

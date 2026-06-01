@@ -1,9 +1,9 @@
+from collections import defaultdict
+
 import gradio as gr
 import pandas as pd
-from collections import defaultdict
 from dotenv import load_dotenv
-
-from evaluation.eval import evaluate_all_retrieval, evaluate_all_answers
+from evaluation.eval import evaluate_all_answers, evaluate_all_retrieval
 
 load_dotenv(override=True)
 

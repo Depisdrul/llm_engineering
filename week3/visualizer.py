@@ -1,9 +1,9 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from typing import List, Dict
 import math
-from openai import OpenAI
+
+import matplotlib.pyplot as plt
+import networkx as nx
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv(override=True)
 
@@ -15,7 +15,7 @@ class TokenPredictor:
         self.predictions = []
         self.model_name = model_name
 
-    def predict_tokens(self, prompt: str, max_tokens: int = 100) -> List[Dict]:
+    def predict_tokens(self, prompt: str, max_tokens: int = 100) -> list[dict]:
         """
         Generate text token by token and track prediction probabilities.
         Returns list of predictions with top token and alternatives.
@@ -59,7 +59,7 @@ class TokenPredictor:
         return predictions
 
 
-def create_token_graph(model_name: str, predictions: List[Dict]) -> nx.DiGraph:
+def create_token_graph(model_name: str, predictions: list[dict]) -> nx.DiGraph:
     """
     Create a directed graph showing token predictions and alternatives.
     """

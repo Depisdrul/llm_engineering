@@ -2,11 +2,12 @@ import logging
 import queue
 import threading
 import time
+
 import gradio as gr
-from deal_agent_framework import DealAgentFramework
-from log_utils import reformat
 import plotly.graph_objects as go
+from deal_agent_framework import DealAgentFramework
 from dotenv import load_dotenv
+from log_utils import reformat
 
 load_dotenv(override=True)
 
@@ -101,24 +102,24 @@ class App:
                             y=vectors[:, 1],
                             z=vectors[:, 2],
                             mode="markers",
-                            marker=dict(size=2, color=colors, opacity=0.7),
+                            marker={"size": 2, "color": colors, "opacity": 0.7},
                         )
                     ]
                 )
 
                 fig.update_layout(
-                    scene=dict(
-                        xaxis_title="x",
-                        yaxis_title="y",
-                        zaxis_title="z",
-                        aspectmode="manual",
-                        aspectratio=dict(x=2.2, y=2.2, z=1),  # Make x-axis twice as long
-                        camera=dict(
-                            eye=dict(x=1.6, y=1.6, z=0.8)  # Adjust camera position
-                        ),
-                    ),
+                    scene={
+                        "xaxis_title": "x",
+                        "yaxis_title": "y",
+                        "zaxis_title": "z",
+                        "aspectmode": "manual",
+                        "aspectratio": {"x": 2.2, "y": 2.2, "z": 1},  # Make x-axis twice as long
+                        "camera": {
+                            "eye": {"x": 1.6, "y": 1.6, "z": 0.8}  # Adjust camera position
+                        },
+                    },
                     height=400,
-                    margin=dict(r=5, b=1, l=5, t=2),
+                    margin={"r": 5, "b": 1, "l": 5, "t": 2},
                 )
 
                 return fig
@@ -140,10 +141,9 @@ class App:
                 thread = threading.Thread(target=worker)
                 thread.start()
 
-                for log_data, output, final_result in update_output(
+                yield from update_output(
                     initial_log_data, log_queue, result_queue
-                ):
-                    yield log_data, output, final_result
+                )
 
             def do_select(selected_index: gr.SelectData):
                 opportunities = self.get_agent_framework().memory
@@ -172,7 +172,7 @@ class App:
                 with gr.Column(scale=1):
                     logs = gr.HTML()
                 with gr.Column(scale=1):
-                    plot = gr.Plot(value=get_plot(), show_label=False)
+                    gr.Plot(value=get_plot(), show_label=False)
 
             ui.load(
                 run_with_logging,

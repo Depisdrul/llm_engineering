@@ -24,9 +24,10 @@ FINETUNED_MODEL = f"{HF_USER}/{PROJECT_RUN_NAME}"
 @app.function(image=image, secrets=secrets, gpu=GPU, timeout=1800)
 def price(description: str) -> float:
     import re
+
     import torch
-    from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, set_seed
     from peft import PeftModel
+    from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, set_seed
 
     PREFIX = "Price is $"
     QUESTION = "What does this cost to the nearest dollar?"

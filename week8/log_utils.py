@@ -31,5 +31,4 @@ def reformat(message):
         message = message.replace(key, f'<span style="color: {value}">')
     message = message.replace(RESET, '</span>')
     return message
-    
-    
+

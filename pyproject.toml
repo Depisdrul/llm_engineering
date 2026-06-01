@@ -51,3 +51,54 @@ dependencies = [
     "groq>=0.33.0",
     "xgboost>=3.1.1",
 ]
+
+[tool.ruff]
+# Exclude community contributions and common directories
+exclude = [
+    "community-contributions",
+    "*/community-contributions",
+    "**/community-contributions/**",
+    ".git",
+    ".venv",
+    "__pycache__",
+    "*.egg-info",
+]
+
+# Target Python 3.11+
+target-version = "py311"
+
+# Line length
+line-length = 120
+
+[tool.ruff.lint]
+# Enable common Python code quality rules
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+# Ignore rules that don't make sense for educational/example code
+ignore = [
+    "E501",   # Line too long (handled by formatter)
+    "B008",   # Do not perform function calls in argument defaults
+    "B904",   # Use `raise from` for exception chaining
+    "B905",   # zip() without strict parameter (Python 3.10+ feature, not critical for educational code)
+    "SIM108", # Use ternary operator (can reduce readability)
+    "N803",   # Argument name should be lowercase (allow graph theory convention G for graphs)
+    "N806",   # Variable in function should be lowercase (for compatibility)
+    "N816",   # Variable in global scope should not be mixedCase (common in educational code)
+]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with 4 spaces
+indent-style = "space"

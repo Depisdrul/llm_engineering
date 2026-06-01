@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "UV: Check Environment Health",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/.vscode/check-env.ps1"
+      ],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "UV: Sync Dependencies",
+      "type": "shell",
+      "command": "uv",
+      "args": ["sync"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "UV: Update All Dependencies",
+      "type": "shell",
+      "command": "uv",
+      "args": ["lock", "--upgrade"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Ruff: Check All Files",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "ruff", "check", "."],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Ruff: Fix All Issues",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "ruff", "check", "--fix", "."],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Full Health Check",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "UV: Check Environment Health",
+        "Ruff: Check All Files"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
