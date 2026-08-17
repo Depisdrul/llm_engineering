@@ -4,6 +4,7 @@ Tests for the study pipeline.
 
 Run from the repo root:  python -m unittest discover -s study/pipeline
 """
+import contextlib
 import io
 import json
 import struct
@@ -89,6 +90,23 @@ class Nb2mdLoaderTests(unittest.TestCase):
                 target.write_text('{"cells": []}', encoding='utf-8')
             found = nb2md.gather(root, recursive=True, excludes=[])
         self.assertEqual([p.name for p in found], ['day1.ipynb'])
+
+    def test_index_links_are_posix(self):
+        nb2md = nb2md_loader.load_nb2md()
+        notebook = {'cells': [{'cell_type': 'code', 'source': 'print(1)',
+                               'metadata': {}, 'execution_count': 1, 'outputs': []}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            src = root / 'src' / 'week1'
+            src.mkdir(parents=True)
+            (src / 'day1.ipynb').write_text(json.dumps(notebook), encoding='utf-8')
+            out = root / 'out'
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = nb2md.main([str(root / 'src'), '-o', str(out), '--recursive', '--index'])
+            self.assertEqual(rc, 0)
+            index = (out / 'INDEX.md').read_text(encoding='utf-8')
+        self.assertIn('(week1/day1.md)', index)
+        self.assertNotIn('\\', index)
 
     def test_gather_does_not_read_dots_in_the_target_path(self):
         nb2md = nb2md_loader.load_nb2md()

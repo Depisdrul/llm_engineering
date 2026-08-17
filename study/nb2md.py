@@ -336,7 +336,7 @@ def gather(target: Path, recursive: bool, excludes: list[str]) -> list[Path]:
     return out
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description="Render Jupyter notebooks to reviewable Markdown, outputs included.",
     )
@@ -355,7 +355,7 @@ def main() -> int:
                     help="do not extract image outputs")
     ap.add_argument("--index", action="store_true",
                     help="write INDEX.md linking every rendered file")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     if not args.target.exists():
         print(f"error: {args.target} does not exist", file=sys.stderr)
@@ -424,8 +424,10 @@ def main() -> int:
                 link = out_path.relative_to(idx_dir)
             except ValueError:
                 link = out_path
+            # Markdown links need forward slashes; on Windows relative_to yields
+            # backslashes, which no viewer outside this filesystem resolves.
             idx_lines.append(
-                f"- [{out_path.stem}]({link}) — {badge[kind]}, "
+                f"- [{out_path.stem}]({link.as_posix()}) — {badge[kind]}, "
                 f"{stats['code_nonempty']} code cell(s)"
             )
         idx_path = idx_dir / "INDEX.md"
