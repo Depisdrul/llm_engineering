@@ -4,15 +4,18 @@ Tests for the study pipeline.
 
 Run from the repo root:  python -m unittest discover -s study/pipeline
 """
+import io
 import json
+import struct
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / 'src'))
 
-from extractors import nb2md_loader
+from extractors import nb2md_loader, slides_extractor
 from extractors.notebook_extractor import (
     NotebookExtractor,
     callout_text,
@@ -412,6 +415,263 @@ class GeneratedDocsTests(unittest.TestCase):
         for page in (self.DOCS / 'week-summaries').glob('*.md'):
             text = page.read_text(encoding='utf-8')
             self.assertNotIn(str(REPO_ROOT), text, f"{page.name} leaks an absolute path")
+
+
+SLIDE_XML = (
+    '<p:sld xmlns:p="{p}" xmlns:a="{a}" xmlns:r="{r}">'
+    '<p:cSld><p:spTree><p:nvGrpSpPr/>{shapes}</p:spTree></p:cSld></p:sld>'
+)
+RELS_XML = (
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    '{items}</Relationships>'
+)
+
+
+def shape(paragraphs, placeholder: str | None = None, untyped: bool = False) -> str:
+    """A `<p:sp>` text shape. `placeholder` sets its `<p:ph type=...>`."""
+    if untyped:
+        ph = '<p:ph/>'
+    elif placeholder:
+        ph = f'<p:ph type="{placeholder}"/>'
+    else:
+        ph = ''
+    body = ''.join(f'<a:p><a:r><a:t>{text}</a:t></a:r></a:p>' for text in paragraphs)
+    return (f'<p:sp><p:nvSpPr><p:nvPr>{ph}</p:nvPr></p:nvSpPr>'
+            f'<p:txBody>{body}</p:txBody></p:sp>')
+
+
+def picture(rel_id: str) -> str:
+    return f'<p:pic><p:blipFill><a:blip r:embed="{rel_id}"/></p:blipFill></p:pic>'
+
+
+def table(rows) -> str:
+    cells = ''.join(
+        '<a:tr>' + ''.join(
+            f'<a:tc><a:txBody><a:p><a:r><a:t>{cell}</a:t></a:r></a:p></a:txBody></a:tc>'
+            for cell in row
+        ) + '</a:tr>'
+        for row in rows
+    )
+    return ('<p:graphicFrame><a:graphic><a:graphicData>'
+            f'<a:tbl>{cells}</a:tbl></a:graphicData></a:graphic></p:graphicFrame>')
+
+
+def png_bytes(width: int, height: int, salt: bytes = b'') -> bytes:
+    """A PNG header real enough for `image_size`. `salt` changes the content hash."""
+    return (b'\x89PNG\r\n\x1a\n' + struct.pack('>I', 13) + b'IHDR'
+            + struct.pack('>II', width, height) + b'\x08\x06\x00\x00\x00' + salt)
+
+
+def make_pptx(slides, media=None, order=None) -> bytes:
+    """Build a minimal .pptx in memory.
+
+    `slides` is a list of dicts with `shapes` (XML string) and optional `images`
+    ({rel_id: media filename}). `order` is the 1-based slide sequence written into
+    `presentation.xml`, which is how a real deck records its display order.
+    """
+    order = order or list(range(1, len(slides) + 1))
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w') as archive:
+        items = ''.join(
+            f'<Relationship Id="rId{position}" Target="slides/slide{number}.xml" Type="slide"/>'
+            for position, number in enumerate(order, start=1)
+        )
+        archive.writestr('ppt/_rels/presentation.xml.rels', RELS_XML.format(items=items))
+        slide_ids = ''.join(
+            f'<p:sldId id="{255 + position}" r:id="rId{position}"/>'
+            for position in range(1, len(order) + 1)
+        )
+        archive.writestr(
+            'ppt/presentation.xml',
+            f'<p:presentation xmlns:p="{slides_extractor.NS_P}" xmlns:r="{slides_extractor.NS_R}">'
+            f'<p:sldIdLst>{slide_ids}</p:sldIdLst></p:presentation>',
+        )
+        for number, slide in enumerate(slides, start=1):
+            archive.writestr(f'ppt/slides/slide{number}.xml', SLIDE_XML.format(
+                p=slides_extractor.NS_P, a=slides_extractor.NS_A, r=slides_extractor.NS_R,
+                shapes=slide['shapes'],
+            ))
+            images = slide.get('images') or {}
+            if images:
+                rels = ''.join(
+                    f'<Relationship Id="{rel_id}" Target="../media/{name}" Type="image"/>'
+                    for rel_id, name in images.items()
+                )
+                archive.writestr(f'ppt/slides/_rels/slide{number}.xml.rels',
+                                 RELS_XML.format(items=rels))
+        for name, data in (media or {}).items():
+            archive.writestr(f'ppt/media/{name}', data)
+    return buffer.getvalue()
+
+
+def write_week_zip(directory: Path, week: int, decks: dict) -> Path:
+    """Write a `Week N-....zip` holding `{deck filename: pptx bytes}`."""
+    path = directory / f'Week {week}-20260817T125248Z-1-001.zip'
+    with zipfile.ZipFile(path, 'w') as archive:
+        for name, data in decks.items():
+            archive.writestr(f'Week {week}/{name}', data)
+    return path
+
+
+class SlidesExtractorTests(unittest.TestCase):
+    def test_output_stays_inside_the_gitignored_slides_folder(self):
+        expected = REPO_ROOT / 'study' / 'notes' / 'lectures' / '_slides'
+        self.assertEqual(slides_extractor.DEFAULT_SLIDES_DIR, expected)
+
+    def test_deck_identity_handles_real_naming_variants(self):
+        for name, expected in [
+            ('Copy of LLM Week 1 Day 3.pptx', (1, 3)),
+            ('Copy of LLMs Week 2 Day 3.pptx', (2, 3)),
+            ('Copy of LLM - Week 5 Day 2.pptx', (5, 2)),
+            ('Copy of LLMs Week 8 Day 4.pptx', (8, 4)),
+        ]:
+            self.assertEqual(slides_extractor.deck_identity(name), expected, name)
+
+    def test_deck_identity_falls_back_to_the_archive_week(self):
+        self.assertEqual(
+            slides_extractor.deck_identity('Intro.pptx', 'Week 6-20260817T125258Z-1-001.zip'),
+            (6, 0),
+        )
+
+    def test_slide_order_follows_presentation_not_filenames(self):
+        deck = make_pptx(
+            [{'shapes': shape(['first file'])}, {'shapes': shape(['second file'])}],
+            order=[2, 1],
+        )
+        with zipfile.ZipFile(io.BytesIO(deck)) as pptx:
+            parts = slides_extractor.slide_order(pptx)
+            texts = [slides_extractor.parse_slide(pptx.read(p))['title'] for p in parts]
+        self.assertEqual(texts, ['second file', 'first file'])
+
+    def test_title_placeholder_becomes_the_heading(self):
+        parsed = slides_extractor.parse_slide(SLIDE_XML.format(
+            p=slides_extractor.NS_P, a=slides_extractor.NS_A, r=slides_extractor.NS_R,
+            shapes=shape(['Five Leaderboards'], placeholder='title')
+                   + shape(['Hugging Face', 'Vellum'], placeholder='body'),
+        ).encode('utf-8'))
+        self.assertEqual(parsed['title'], 'Five Leaderboards')
+        self.assertEqual(parsed['lines'], ['Hugging Face', 'Vellum'])
+
+    def test_short_opening_line_is_promoted_when_no_title_placeholder(self):
+        parsed = slides_extractor.parse_slide(SLIDE_XML.format(
+            p=slides_extractor.NS_P, a=slides_extractor.NS_A, r=slides_extractor.NS_R,
+            shapes=shape(['The Arena', 'LM Arena is a resource']),
+        ).encode('utf-8'))
+        self.assertEqual(parsed['title'], 'The Arena')
+        self.assertEqual(parsed['lines'], ['LM Arena is a resource'])
+
+    def test_long_opening_line_stays_in_the_body(self):
+        sentence = ('Build a product that converts Python code to C++ for performance, '
+                    'solving it once with a frontier model and once with an open-source one')
+        parsed = slides_extractor.parse_slide(SLIDE_XML.format(
+            p=slides_extractor.NS_P, a=slides_extractor.NS_A, r=slides_extractor.NS_R,
+            shapes=shape([sentence, 'and then measure it']),
+        ).encode('utf-8'))
+        self.assertEqual(parsed['title'], '')
+        self.assertEqual(parsed['lines'], [sentence, 'and then measure it'])
+
+    def test_footer_and_slide_number_placeholders_are_dropped(self):
+        parsed = slides_extractor.parse_slide(SLIDE_XML.format(
+            p=slides_extractor.NS_P, a=slides_extractor.NS_A, r=slides_extractor.NS_R,
+            shapes=shape(['Real content'], placeholder='title')
+                   + shape(['7'], placeholder='sldNum')
+                   + shape(['edwarddonner.com'], placeholder='ftr'),
+        ).encode('utf-8'))
+        self.assertEqual(parsed['title'], 'Real content')
+        self.assertEqual(parsed['lines'], [])
+
+    def test_table_cells_become_lines(self):
+        parsed = slides_extractor.parse_slide(SLIDE_XML.format(
+            p=slides_extractor.NS_P, a=slides_extractor.NS_A, r=slides_extractor.NS_R,
+            shapes=shape(['Benchmarks'], placeholder='title') + table([['Model', 'Score']]),
+        ).encode('utf-8'))
+        self.assertEqual(parsed['lines'], ['Model', 'Score'])
+
+    def test_image_size_reads_png_dimensions(self):
+        self.assertEqual(slides_extractor.image_size(png_bytes(1280, 720)), (1280, 720))
+        self.assertEqual(slides_extractor.image_size(b'not an image'), (0, 0))
+
+    def test_identical_images_dedupe_across_decks(self):
+        logo = png_bytes(1280, 720, salt=b'logo')
+        deck = make_pptx(
+            [{'shapes': shape(['Deck title'], placeholder='title') + picture('rId9'),
+              'images': {'rId9': 'image1.png'}}],
+            media={'image1.png': logo},
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            write_week_zip(tmp_path, 4, {'Copy of LLM Week 4 Day 2.pptx': deck})
+            write_week_zip(tmp_path, 5, {'Copy of LLM - Week 5 Day 3.pptx': deck})
+            manifest = slides_extractor.extract_slides(tmp_path)
+
+            self.assertEqual(len(manifest['images']), 1)
+            image = manifest['images'][0]
+            self.assertEqual(len(image['occurrences']), 2)
+            self.assertEqual([(o['week'], o['day']) for o in image['occurrences']],
+                             [(4, 2), (5, 3)])
+            self.assertEqual(image['occurrences'][0]['slide_title'], 'Deck title')
+            self.assertEqual(len(list((tmp_path / 'media').glob('*.png'))), 1)
+            self.assertTrue((tmp_path / 'text' / 'week4-day2.md').is_file())
+            self.assertTrue((tmp_path / 'manifest.json').is_file())
+
+    def test_min_pixels_filters_icons(self):
+        deck = make_pptx(
+            [{'shapes': shape(['Title'], placeholder='title')
+              + picture('rId1') + picture('rId2'),
+              'images': {'rId1': 'icon.png', 'rId2': 'chart.png'}}],
+            media={'icon.png': png_bytes(32, 32, salt=b'i'),
+                   'chart.png': png_bytes(1280, 720, salt=b'c')},
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            write_week_zip(tmp_path, 4, {'Copy of LLM Week 4 Day 1.pptx': deck})
+            manifest = slides_extractor.extract_slides(tmp_path, min_pixels=400 * 300)
+            self.assertEqual(len(manifest['images']), 1)
+            self.assertEqual(manifest['images'][0]['width'], 1280)
+
+    def test_no_images_still_counts_them_without_writing(self):
+        deck = make_pptx(
+            [{'shapes': shape(['Title'], placeholder='title') + picture('rId1'),
+              'images': {'rId1': 'chart.png'}}],
+            media={'chart.png': png_bytes(800, 600, salt=b'c')},
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            write_week_zip(tmp_path, 7, {'Copy of LLMs Week 7 Day 1.pptx': deck})
+            manifest = slides_extractor.extract_slides(tmp_path, write_images=False)
+            self.assertEqual(len(manifest['images']), 1)
+            self.assertFalse((tmp_path / 'media').exists())
+
+    def test_rendered_page_carries_slides_and_image_names(self):
+        deck = make_pptx(
+            [{'shapes': shape(['Five Leaderboards'], placeholder='title')
+              + shape(['Hugging Face', 'Vellum'], placeholder='body') + picture('rId1'),
+              'images': {'rId1': 'chart.png'}}],
+            media={'chart.png': png_bytes(1280, 720, salt=b'x')},
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            write_week_zip(tmp_path, 4, {'Copy of LLM Week 4 Day 2.pptx': deck})
+            slides_extractor.extract_slides(tmp_path)
+            page = (tmp_path / 'text' / 'week4-day2.md').read_text(encoding='utf-8')
+
+        self.assertIn('# Week 4, Day 2', page)
+        self.assertIn('## Slide 1 - Five Leaderboards', page)
+        self.assertIn('- Hugging Face', page)
+        self.assertIn('_Images: `', page)
+        self.assertIn("instructor's material", page)
+
+    def test_audit_reports_without_writing(self):
+        deck = make_pptx([{'shapes': shape(['Title'], placeholder='title')
+                           + shape(['a line'], placeholder='body')}])
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            write_week_zip(tmp_path, 3, {'Copy of LLM Week 3 Day 1.pptx': deck})
+            report = slides_extractor.audit(tmp_path)
+            self.assertEqual(report['decks'], 1)
+            self.assertEqual(report['slides'], 1)
+            self.assertEqual(report['unique_images'], 0)
+            self.assertFalse((tmp_path / 'text').exists())
 
 
 if __name__ == '__main__':

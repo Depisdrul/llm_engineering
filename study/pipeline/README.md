@@ -46,6 +46,33 @@ committing.
 The pipeline finds the repo root by walking up for a directory holding both
 `.git` and `study/`, so it runs from any working directory.
 
+## Slide decks — a standalone tool, not a phase
+
+`src/extractors/slides_extractor.py` renders the course slide decks to Markdown
+and pulls out their images. It is **not** wired into `extract_all.py` and must
+not be: its input lives in the gitignored `study/notes/lectures/_slides/`, so a
+fresh clone does not have it and no pipeline phase may depend on it.
+
+```bash
+# what's there, render nothing
+python study/pipeline/src/extractors/slides_extractor.py --audit
+
+# render to _slides/text/ and _slides/media/, plus manifest.json
+python study/pipeline/src/extractors/slides_extractor.py
+```
+
+The decks arrive as one zip per week, each holding a `.pptx` per day. A `.pptx`
+is itself a zip of XML, so both layers are read in place — nothing is unpacked
+except the images. Output stays inside `_slides/`, because a transcription of
+the instructor's deck is still the instructor's material.
+
+Images are deduplicated by content hash and recorded in `manifest.json` with
+every occurrence and that slide's text. `--min-pixels` drops icons and logos.
+
+The analysis built from this output is
+[`../notes/SLIDE-COVERAGE.md`](../notes/SLIDE-COVERAGE.md); it is paraphrase, so
+it is committed while its source is not.
+
 ## What is unproven — read before trusting output
 
 **`--use-llm` has never been run against the current topic-page path.** It is
@@ -84,7 +111,8 @@ study/
 ├── notes/                   # Hand-written. The pipeline reads these.
 ├── pipeline/
 │   ├── src/
-│   │   ├── extractors/      # nb2md_loader, notebook_extractor, web_scraper
+│   │   ├── extractors/      # nb2md_loader, notebook_extractor, web_scraper,
+│   │   │                    # slides_extractor (standalone, not a phase)
 │   │   ├── processors/      # llm_summarizer
 │   │   └── generators/      # content_generator, reference_sync, lecture_sync
 │   ├── templates/           # Jinja2: topic_page.md.j2, quickref.md.j2
