@@ -75,5 +75,6 @@
       "source.fixAll.markdownlint": "explicit"
     },
     "files.trimTrailingWhitespace": true
-  }
+  },
+  "ruff.lint.ignore": []
 }
