@@ -2,17 +2,16 @@
 LLM Summarizer - Use LLMs to extract key concepts and generate summaries
 """
 import os
-import json
-from typing import Dict, List, Optional
-from openai import OpenAI
-from anthropic import Anthropic
+
 import tiktoken
+from anthropic import Anthropic
+from openai import OpenAI
 
 
 class LLMSummarizer:
     """Use LLMs to summarize notebook content and generate knowledge base entries"""
 
-    def __init__(self, provider: str = 'openai', model: Optional[str] = None, base_url: Optional[str] = None):
+    def __init__(self, provider: str = 'openai', model: str | None = None, base_url: str | None = None):
         """
         Initialize summarizer
         Args:
@@ -70,7 +69,7 @@ class LLMSummarizer:
             )
             return response.content[0].text
 
-    def extract_key_concepts(self, notebook_data: Dict) -> Dict:
+    def extract_key_concepts(self, notebook_data: dict) -> dict:
         """Extract key concepts from notebook data"""
         system_prompt = """You are an expert at analyzing educational content and extracting key learning objectives.
 Your task is to identify the most important concepts, techniques, and skills covered in this material."""
@@ -113,7 +112,7 @@ Notebook content:
             'token_count': self.count_tokens(context + response)
         }
 
-    def generate_topic_summary(self, sections: List[str], topic_name: str) -> Dict:
+    def generate_topic_summary(self, sections: list[str], topic_name: str) -> dict:
         """Generate a comprehensive topic summary from multiple sections"""
         system_prompt = f"""You are creating educational documentation for the topic: {topic_name}.
 Your goal is to synthesize information from multiple sources into a clear, comprehensive explanation."""
@@ -143,7 +142,7 @@ Write in clear, educational style. Be comprehensive but concise.
             'sources_used': len(sections)
         }
 
-    def generate_quickref_entry(self, detailed_content: str, topic_name: str) -> Dict:
+    def generate_quickref_entry(self, detailed_content: str, topic_name: str) -> dict:
         """Generate a quick reference from detailed content"""
         system_prompt = """You are creating quick reference cheatsheets for developers.
 Focus on practical, immediately useful information that can be scanned in 30 seconds."""
@@ -170,7 +169,7 @@ Detailed content:
             'token_count': self.count_tokens(detailed_content[:1500] + response)
         }
 
-    def extract_troubleshooting_info(self, sections: List[Dict]) -> Dict:
+    def extract_troubleshooting_info(self, sections: list[dict]) -> dict:
         """Extract troubleshooting information from notebook sections"""
         system_prompt = """You are extracting troubleshooting information from educational materials.
 Focus on identifying error messages, root causes, solutions, and prevention strategies."""
@@ -207,7 +206,7 @@ Content:
             'token_count': self.count_tokens(combined + response)
         }
 
-    def classify_topic(self, content: str, available_topics: List[str]) -> List[str]:
+    def classify_topic(self, content: str, available_topics: list[str]) -> list[str]:
         """Classify content into one or more topics"""
         system_prompt = """You are classifying educational content into topic categories.
 Choose all relevant topics that this content covers."""
@@ -235,7 +234,7 @@ List all relevant topics that this content covers (comma-separated):
         return list(set(matched))
 
 
-def summarize_notebook(notebook_data: Dict, summarizer: Optional[LLMSummarizer] = None) -> Dict:
+def summarize_notebook(notebook_data: dict, summarizer: LLMSummarizer | None = None) -> dict:
     """Summarize a single notebook"""
     if summarizer is None:
         summarizer = LLMSummarizer()

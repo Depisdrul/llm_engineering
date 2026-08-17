@@ -2,9 +2,8 @@
 Web Scraper - Extract content from Ed Donner's website
 """
 import time
-import re
-from typing import Dict, List, Optional
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -19,7 +18,7 @@ class WebContentExtractor:
             'User-Agent': 'Mozilla/5.0 (Educational Bot for Personal Study Notes)'
         })
 
-    def fetch_page(self, url: str, delay: float = 1.0) -> Optional[BeautifulSoup]:
+    def fetch_page(self, url: str, delay: float = 1.0) -> BeautifulSoup | None:
         """Fetch a page with rate limiting"""
         try:
             time.sleep(delay)  # Rate limiting
@@ -30,7 +29,7 @@ class WebContentExtractor:
             print(f"Error fetching {url}: {e}")
             return None
 
-    def extract_course_resources_page(self) -> Dict:
+    def extract_course_resources_page(self) -> dict:
         """Extract the main course resources page"""
         url = "https://edwarddonner.com/2024/11/13/llm-engineering-resources/"
         soup = self.fetch_page(url)
@@ -90,7 +89,7 @@ class WebContentExtractor:
 
         return data
 
-    def extract_faq_page(self) -> Dict:
+    def extract_faq_page(self) -> dict:
         """Extract FAQ content"""
         url = "https://edwarddonner.com/faq/"
         soup = self.fetch_page(url)
@@ -128,7 +127,7 @@ class WebContentExtractor:
             'faqs': faqs
         }
 
-    def extract_key_blog_posts(self) -> List[Dict]:
+    def extract_key_blog_posts(self) -> list[dict]:
         """Extract relevant blog posts"""
         # Start with the main page
         soup = self.fetch_page(self.base_url)
@@ -155,7 +154,7 @@ class WebContentExtractor:
 
         return posts
 
-    def extract_all(self) -> Dict:
+    def extract_all(self) -> dict:
         """Extract all website content"""
         print("Scraping Ed Donner's website...")
 
@@ -168,7 +167,7 @@ class WebContentExtractor:
         print("✓ Website scraping complete")
         return data
 
-    def format_for_markdown(self, data: Dict) -> str:
+    def format_for_markdown(self, data: dict) -> str:
         """Convert extracted data to markdown format"""
         md = []
 
@@ -197,7 +196,7 @@ class WebContentExtractor:
         return '\n'.join(md)
 
 
-def scrape_website() -> Dict:
+def scrape_website() -> dict:
     """Main function to scrape Ed Donner's website"""
     scraper = WebContentExtractor()
     return scraper.extract_all()
@@ -208,11 +207,11 @@ if __name__ == '__main__':
     data = scrape_website()
 
     if 'course_resources' in data:
-        print(f"\n✓ Extracted course resources page")
+        print("\n✓ Extracted course resources page")
         print(f"  Found {len(data['course_resources'].get('sections', []))} sections")
 
     if 'faq' in data:
-        print(f"✓ Extracted FAQ page")
+        print("✓ Extracted FAQ page")
         print(f"  Found {len(data['faq'].get('faqs', []))} FAQ entries")
 
     if 'blog_posts' in data:

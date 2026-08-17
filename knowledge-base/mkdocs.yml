@@ -64,6 +64,15 @@ markdown_extensions:
 nav:
   - Home: index.md
 
+  - Topic References:
+      - reference/index.md
+      - LLM Foundations (Weeks 1-3): reference/llm-foundations.md
+      - RAG & Vector Search (Week 5): reference/rag-and-vector-search.md
+      - Training & Fine-Tuning (Weeks 6-7): reference/training-and-finetuning.md
+      - Agents & Deployment (Week 8): reference/agents-and-deployment.md
+      - API Keys & Runnability: reference/api-keys-and-runnability.md
+      - Lecture Distillation Workflow: reference/lecture-distillation-workflow.md
+
   - Topics:
       - Foundations:
           - LLM APIs & Integration: topics/01-foundations/llm-apis.md

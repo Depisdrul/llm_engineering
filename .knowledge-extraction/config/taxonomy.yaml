@@ -1,3 +1,8 @@
+# Topic taxonomy for the knowledge base.
+#
+# `reference` names a published hand-written reference (see
+# src/generators/reference_sync.py) that covers this topic authoritatively.
+# Topics without one fall back to notebook-derived content only.
 topics:
   - id: llm-apis
     name: LLM APIs & Integration
@@ -5,6 +10,7 @@ topics:
     folder: 01-foundations
     description: OpenAI, Anthropic, Gemini API patterns, authentication, error handling
     weeks: [1, 2]
+    reference: api-keys-and-runnability
 
   - id: prompt-engineering
     name: Prompt Engineering
@@ -12,6 +18,7 @@ topics:
     folder: 02-core-concepts
     description: System/user prompts, conversation history, streaming, prompt caching
     weeks: [1, 2, 3, 4, 5]
+    reference: llm-foundations
 
   - id: dev-tools
     name: Development Tools
@@ -33,6 +40,7 @@ topics:
     folder: 02-core-concepts
     description: Token counting, context windows, tiktoken, encoding formats
     weeks: [1, 2]
+    reference: llm-foundations
 
   - id: multi-model
     name: Multi-Model Orchestration
@@ -40,6 +48,7 @@ topics:
     folder: 03-integration
     description: LiteLLM, LangChain, OpenRouter, Ollama integration
     weeks: [2, 3]
+    reference: api-keys-and-runnability
 
   - id: rag-systems
     name: RAG Systems
@@ -47,6 +56,7 @@ topics:
     folder: 04-rag
     description: Vector databases, embeddings, retrievers, semantic search, chunking
     weeks: [5]
+    reference: rag-and-vector-search
 
   - id: embeddings
     name: Embeddings
@@ -54,6 +64,7 @@ topics:
     folder: 04-rag
     description: HuggingFace embeddings, vector representations, similarity search
     weeks: [2, 5, 8]
+    reference: rag-and-vector-search
 
   - id: vector-databases
     name: Vector Databases
@@ -61,6 +72,7 @@ topics:
     folder: 04-rag
     description: Chroma, FAISS, persistence, retrieval strategies
     weeks: [5]
+    reference: rag-and-vector-search
 
   - id: agent-architectures
     name: Agent Architectures
@@ -68,6 +80,7 @@ topics:
     folder: 05-agents
     description: Tool use, function calling, multi-agent systems, autonomous planning
     weeks: [8]
+    reference: agents-and-deployment
 
   - id: tool-use
     name: Tool Use & Function Calling
@@ -75,6 +88,7 @@ topics:
     folder: 05-agents
     description: OpenAI tools, function calling patterns, structured outputs
     weeks: [8]
+    reference: agents-and-deployment
 
   - id: multi-agent
     name: Multi-Agent Systems
@@ -82,6 +96,7 @@ topics:
     folder: 05-agents
     description: Agent collaboration, coordination, frameworks (CrewAI, AutoGen, LangGraph)
     weeks: [8]
+    reference: agents-and-deployment
 
   - id: fine-tuning
     name: Fine-Tuning & Training
@@ -89,6 +104,7 @@ topics:
     folder: 06-training
     description: QLoRA, PEFT, LoRA, dataset preparation, training loops
     weeks: [6, 7]
+    reference: training-and-finetuning
 
   - id: dataset-prep
     name: Dataset Preparation
@@ -96,6 +112,7 @@ topics:
     folder: 06-training
     description: Data curation, preprocessing, stratified sampling, deduplication
     weeks: [6]
+    reference: training-and-finetuning
 
   - id: evaluation
     name: Evaluation & Metrics
@@ -103,6 +120,7 @@ topics:
     folder: 06-training
     description: Model evaluation, baselines, metrics, benchmarking
     weeks: [6, 7]
+    reference: training-and-finetuning
 
   - id: gpu-computing
     name: GPU Computing
@@ -110,6 +128,7 @@ topics:
     folder: 07-gpu
     description: CUDA, model loading, inference optimization, Colab GPU
     weeks: [3, 6, 7]
+    reference: training-and-finetuning
 
   - id: deployment
     name: Production Deployment
@@ -117,6 +136,7 @@ topics:
     folder: 08-production
     description: Modal.com, containerization, API endpoints, scaling, cost optimization
     weeks: [8]
+    reference: agents-and-deployment
 
   - id: ui-interaction
     name: UI & Interaction
@@ -124,6 +144,7 @@ topics:
     folder: 08-production
     description: Gradio interfaces, chatbots, streaming responses, conversational AI
     weeks: [5, 8]
+    reference: agents-and-deployment
 
 categories:
   foundations:

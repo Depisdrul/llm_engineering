@@ -18,6 +18,17 @@ For the actual course content, please enroll in the course.
 
 ## Navigation
 
+### Topic References
+
+Written from primary sources rather than lecture transcripts. Start here — these supersede the generated pages below.
+
+- [LLM Foundations (Weeks 1-3)](reference/llm-foundations.md)
+- [RAG & Vector Search (Week 5)](reference/rag-and-vector-search.md)
+- [Training & Fine-Tuning (Weeks 6-7)](reference/training-and-finetuning.md)
+- [Agents & Deployment (Week 8)](reference/agents-and-deployment.md)
+- [API Keys & Runnability](reference/api-keys-and-runnability.md)
+- [Lecture Distillation Workflow](reference/lecture-distillation-workflow.md)
+
 ### By Topic
 
 #### Foundation Topics
@@ -96,4 +107,4 @@ Use the search bar above to find topics, concepts, or code examples.
 This knowledge base is automatically generated from course notebooks and supplemented with manual notes. 
 It's organized by topic rather than chronologically, making it easier to review concepts and find information.
 
-*Last updated: 2026-06-01*
+*Last updated: 2026-08-17*
