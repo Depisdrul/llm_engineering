@@ -13,11 +13,16 @@ why things are shaped the way they are, and where everything else lives.
 | [`pipeline/`](pipeline/) | The extractor — code, config, templates, tests. |
 | `docs/` | MkDocs content. Build output, except `projects/` and `quick-ref/`. |
 | `nb2md.py` | The repo's single notebook parser. Standalone and stdlib-only. |
+| `notebooks/` | Every course notebook rendered to Markdown. Gitignored; rebuild with the command below. |
 | `_site/` | Rendered HTML. Gitignored. |
 
 ```bash
 # regenerate the site from notes/ and the cached notebook extraction
 python study/pipeline/extract_all.py --generate-only
+
+# render every notebook to study/notebooks/ for reading and grepping
+python study/nb2md.py . -o study/notebooks --recursive --index \
+    --exclude community-contributions --exclude community_contributions
 
 # tests
 python -m unittest discover -s study/pipeline -t study/pipeline

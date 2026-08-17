@@ -220,3 +220,11 @@ write_hf_token.txt
 # Course slide decks. Instructor's materials - keep them out of a repo that may
 # be the source of an upstream PR. See study/notes/LECTURE-DISTILL.md section 2.
 study/notes/lectures/_slides/
+
+# Rendered notebooks. Pure output of study/nb2md.py from the committed .ipynb
+# files - stdlib only, seconds to rebuild, no API key. Regenerate with:
+#   python study/nb2md.py . -o study/notebooks --recursive --index \
+#     --exclude community-contributions --exclude community_contributions
+# Ignoring the whole tree also covers the images nb2md extracts beside each
+# page, which the *.png rule above would otherwise swallow without an error.
+study/notebooks/

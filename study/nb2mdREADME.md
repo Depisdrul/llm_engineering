@@ -33,14 +33,18 @@ PRs only. **Outputs you save are yours to keep and will commit verbatim.**
 
 ```bash
 # 1. See what you're dealing with — classifies, writes nothing
-python3 nb2md.py . --recursive --exclude community-contributions --audit
+python study/nb2md.py . --recursive --audit \
+    --exclude community-contributions --exclude community_contributions
 
-# 2. Render everything into a notes tree, with an index
-python3 nb2md.py . -o notes/ --recursive \
-    --exclude community-contributions \
-    --exclude community_contributions \
-    --index
+# 2. Render everything, with an index
+python study/nb2md.py . -o study/notebooks --recursive --index \
+    --exclude community-contributions --exclude community_contributions
 ```
+
+Run both from the repo root. `study/notebooks/` is gitignored: the render is a
+pure function of the committed `.ipynb` files, and rebuilding it costs seconds
+and no API key. Do not aim `-o` at `study/notes/` — that tree is hand-written
+and the renderer would bury it.
 
 The excludes matter: the repo carries ~3,000 community-contribution notebooks
 across ~273 folders. Without excluding them you render those too, and it buries
@@ -48,7 +52,7 @@ the 65 that are actually the course.
 
 Expected audit output on a clean clone:
 
-```
+```text
      4  executed (has saved outputs) - fully reviewable
     53  stripped (code + prose, no outputs)
      8  COLAB STUB - link only, no local content
@@ -56,14 +60,17 @@ Expected audit output on a clean clone:
 
 Output layout mirrors the repo, with images extracted next to each file:
 
-```
-notes/
+```text
+study/notebooks/
   INDEX.md                    every notebook, flagged reviewable / no outputs / STUB
   week1/day1.md
   week5/day4.md
   week5/day4_assets/          day4_out001.png, ...
   guides/09_ai_apis_and_ollama.md
 ```
+
+No `_assets/` directory exists today — no notebook in the course carries an
+image output. The first plot you run and save creates one.
 
 ---
 
@@ -108,21 +115,19 @@ The renderer only pays off if executed notebooks accumulate. One line, after any
 session where you ran something:
 
 ```bash
-python3 nb2md.py week5/ -o notes/week5 --index
+python study/nb2md.py week5/ -o study/notebooks/week5 --index
 ```
 
 Optional git alias so you never think about it:
 
 ```bash
-git config alias.notes '!python3 nb2md.py . -o notes/ --recursive \
+git config alias.render '!python study/nb2md.py . -o study/notebooks --recursive \
   --exclude community-contributions --exclude community_contributions --index'
-# then: git notes
+# then: git render
 ```
 
-Add `notes/` to `.gitignore` if you'd rather not commit the rendered copies —
-but committing them is the better call. Rendered Markdown diffs readably in git,
-so `git log -p notes/week5/day4.md` shows you how your own understanding of a
-notebook changed between study blocks. Raw `.ipynb` diffs are unreadable JSON.
+The rendered tree is disposable; the executed `.ipynb` behind it is what has to
+stay committed, with its outputs intact.
 
 ---
 

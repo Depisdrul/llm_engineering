@@ -107,6 +107,25 @@ with upstream, one folder to separate for a PR, and `git log -p study/` is the
 whole history. `study/knowledge-base` must never exist: `week5/knowledge-base/`
 is the course's RAG corpus, and that ambiguity is what the restructure removed.
 
+**Rendered notebooks are read locally, not published.** `study/nb2md.py`
+renders every course notebook into the gitignored `study/notebooks/`. The
+render is a pure function of the committed `.ipynb` files and nb2md is
+stdlib-only, so rebuilding costs seconds and no API key — which is why the
+tree is disposable and the executed notebooks behind it are not. Nothing under
+`study/docs/` may link into it, the same constraint that applies to
+`_slides/`.
+
+This is the exception to committing generated output, above. The argument for
+committing renders is that their diffs show understanding changing; these
+diffs only show which notebook was last executed, which `git log` already
+says.
+
+**No notebook in the course carries an image output** — verified across all
+65. So nb2md's `_assets/` path has never fired, and `.gitignore`'s blanket
+`*.png` rule has never silently eaten anything. It would eat one the first time a
+saved plot lands in a tracked directory, which is a second reason the render
+tree is ignored wholesale rather than by file type.
+
 **Paths in generated docs are repo-relative POSIX**, and **console output is
 ASCII-only** — a cp1252 Windows terminal crashes on `✓`.
 
