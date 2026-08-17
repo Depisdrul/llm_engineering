@@ -1,4 +1,4 @@
-<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/08apikeysandrunnability.md
+<!-- Generated copy. Source: notes/08-api-keys-and-runnability.md
      Edit the source file; this copy is overwritten on every extraction run. -->
 
 # Operational — which notebooks you can actually run with a Google key

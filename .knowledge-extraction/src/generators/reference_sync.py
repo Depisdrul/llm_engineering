@@ -1,11 +1,11 @@
 """
 Reference Sync - publish the hand-written topic references into the MkDocs site.
 
-The references in `.knowledge-extraction/improvements-from-chrome-session/` are
-written from primary sources and are the authoritative layer of the knowledge
-base; the generated topic pages are the provenance layer that points back at the
-notebooks. This module copies the references into `knowledge-base/docs/reference/`
-so MkDocs serves and indexes them.
+The references in `notes/` are written from primary sources and are the
+authoritative layer of the knowledge base; the generated topic pages are the
+provenance layer that points back at the notebooks. This module copies the
+references into `knowledge-base/docs/reference/` so MkDocs serves and indexes
+them.
 
 The copies are build output. Edit the source files.
 """
@@ -16,57 +16,57 @@ from typing import Any
 from extractors.nb2md_loader import find_repo_root
 
 REPO_ROOT = find_repo_root()
-DEFAULT_SOURCE_DIR = REPO_ROOT / '.knowledge-extraction' / 'improvements-from-chrome-session'
+DEFAULT_SOURCE_DIR = REPO_ROOT / 'notes'
 DEFAULT_OUTPUT_DIR = REPO_ROOT / 'knowledge-base' / 'docs'
 REFERENCE_SUBDIR = 'reference'
 
 SYNC_BANNER = (
-    "<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/{source}\n"
+    "<!-- Generated copy. Source: notes/{source}\n"
     "     Edit the source file; this copy is overwritten on every extraction run. -->\n\n"
 )
 
 # Source file -> published slug and nav title. Only files listed here are
 # published, so drafts can sit in the source folder without going live.
 #
-# `aliases` are the filenames the notes use when they cross-link each other.
-# The notes were written against a numbered naming convention that the files on
-# disk do not use, so every alias is rewritten to the published slug on sync.
+# `aliases` are extra filenames a note may use when cross-linking another. The
+# source stem is always an alias, so most notes need none; the entries below
+# cover the flattened names the notes were first delivered under.
 REFERENCE_NOTES: list[dict[str, Any]] = [
     {
-        'source': '01llmfoundations.md',
+        'source': '01-llm-foundations.md',
         'slug': 'llm-foundations',
         'title': 'LLM Foundations (Weeks 1-3)',
-        'aliases': ['01-llm-foundations', '01llmfoundations'],
+        'aliases': ['01llmfoundations'],
     },
     {
-        'source': '05ragandvectorsearch.md',
+        'source': '05-rag-and-vector-search.md',
         'slug': 'rag-and-vector-search',
         'title': 'RAG & Vector Search (Week 5)',
-        'aliases': ['05-rag-and-vector-search', '05ragandvectorsearch'],
+        'aliases': ['05ragandvectorsearch'],
     },
     {
-        'source': '06trainingandfinetuning.md',
+        'source': '06-training-and-finetuning.md',
         'slug': 'training-and-finetuning',
         'title': 'Training & Fine-Tuning (Weeks 6-7)',
-        'aliases': ['06-training-and-finetuning', '06trainingandfinetuning'],
+        'aliases': ['06trainingandfinetuning'],
     },
     {
-        'source': '07agentsanddeployment.md',
+        'source': '07-agents-and-deployment.md',
         'slug': 'agents-and-deployment',
         'title': 'Agents & Deployment (Week 8)',
-        'aliases': ['07-agents-and-deployment', '07agentsanddeployment'],
+        'aliases': ['07agentsanddeployment'],
     },
     {
-        'source': '08apikeysandrunnability.md',
+        'source': '08-api-keys-and-runnability.md',
         'slug': 'api-keys-and-runnability',
         'title': 'API Keys & Runnability',
-        'aliases': ['08-api-keys-and-runnability', '08apikeysandrunnability'],
+        'aliases': ['08apikeysandrunnability'],
     },
     {
-        'source': 'LECTUREDISTILL.md',
+        'source': 'LECTURE-DISTILL.md',
         'slug': 'lecture-distillation-workflow',
         'title': 'Lecture Distillation Workflow',
-        'aliases': ['LECTURE-DISTILL', 'LECTUREDISTILL'],
+        'aliases': ['LECTUREDISTILL'],
     },
 ]
 
@@ -104,6 +104,12 @@ def reference_path(slug: str) -> str:
     return f"{REFERENCE_SUBDIR}/{slug}.md"
 
 
+def published_notes(source_dir: Path | None = None) -> list[dict[str, Any]]:
+    """The listed notes whose source file is actually present."""
+    source_dir = Path(source_dir) if source_dir else DEFAULT_SOURCE_DIR
+    return [n for n in REFERENCE_NOTES if (source_dir / n['source']).is_file()]
+
+
 def sync_references(source_dir: Path | None = None,
                     output_dir: Path | None = None) -> list[str]:
     """Copy every listed reference note into the docs tree. Returns written paths."""
@@ -136,8 +142,13 @@ def sync_references(source_dir: Path | None = None,
     return written
 
 
-def generate_reference_index(output_dir: Path | None = None) -> str:
-    """Write the landing page that lists every published reference."""
+def generate_reference_index(output_dir: Path | None = None,
+                             source_dir: Path | None = None) -> str:
+    """Write the landing page that lists every published reference.
+
+    Notes with no source file on disk are omitted, so a listed-but-unwritten
+    reference cannot put a dead link into the site.
+    """
     output_root = Path(output_dir) if output_dir else DEFAULT_OUTPUT_DIR
     target_dir = output_root / REFERENCE_SUBDIR
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -155,7 +166,7 @@ def generate_reference_index(output_dir: Path | None = None) -> str:
         "",
     ]
 
-    for note in REFERENCE_NOTES:
+    for note in published_notes(source_dir):
         lines.append(f"- [{note['title']}]({note['slug']}.md)")
 
     lines.append("")

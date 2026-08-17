@@ -1,0 +1,12 @@
+# Upstream course material - not ours to restyle.
+community-contributions/
+**/community-contributions/
+**/community_contributions/
+
+# MkDocs build output. These are copies of notes/ and of generated pages;
+# lint the sources instead.
+knowledge-base/docs/reference/
+knowledge-base/docs/lectures/
+knowledge-base/docs/topics/
+knowledge-base/docs/weeks/
+knowledge-base/site/

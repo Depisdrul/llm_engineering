@@ -21,7 +21,7 @@ from extractors.notebook_extractor import (
     is_narration,
     repo_relative,
 )
-from generators import reference_sync
+from generators import lecture_sync, reference_sync
 from generators.content_generator import (
     ContentGenerator,
     load_taxonomy,
@@ -217,6 +217,9 @@ class ReferenceSyncTests(unittest.TestCase):
             source = reference_sync.DEFAULT_SOURCE_DIR / note['source']
             self.assertTrue(source.is_file(), f"missing reference source: {note['source']}")
 
+    def test_sources_live_in_notes(self):
+        self.assertEqual(reference_sync.DEFAULT_SOURCE_DIR.name, 'notes')
+
     def test_cross_links_are_rewritten_to_published_slugs(self):
         body = 'see [foundations](./01-llm-foundations.md) and [rag](05ragandvectorsearch.md#4-chunking)'
         rewritten = reference_sync.rewrite_cross_links(body)
@@ -227,12 +230,116 @@ class ReferenceSyncTests(unittest.TestCase):
         body = '[x](./nope.md) and [y](https://example.com/README.md)'
         self.assertEqual(reference_sync.rewrite_cross_links(body), body)
 
+    def test_index_omits_notes_with_no_source_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            (tmp_path / 'src').mkdir()
+            (tmp_path / 'src' / '01-llm-foundations.md').write_text('# x', encoding='utf-8')
+            index = Path(reference_sync.generate_reference_index(
+                output_dir=tmp_path / 'docs', source_dir=tmp_path / 'src'))
+            body = index.read_text(encoding='utf-8')
+            self.assertIn('(llm-foundations.md)', body)
+            self.assertNotIn('(rag-and-vector-search.md)', body)
+
     def test_taxonomy_references_all_resolve(self):
         slugs = {note['slug'] for note in reference_sync.REFERENCE_NOTES}
         for topic in load_taxonomy().get('topics', []):
             slug = topic.get('reference')
             if slug:
                 self.assertIn(slug, slugs, f"{topic['id']} points at unknown reference {slug}")
+
+
+LECTURE_NOTE = """# 108 — Day 1 - Building a Simple RAG System
+
+**Week 5, Day 1** · 9 min · `week5/day1.ipynb` · deck *LLM - Week 5 Day 1*
+
+## Claim
+
+A naive dictionary lookup is enough to prove context injection works.
+
+## Open
+
+- What is the token size of the corpus?
+- Does the week reach hybrid retrieval?
+
+## Links
+
+- Repo: `week5/day1.ipynb`
+"""
+
+CONCEPT_ONLY_NOTE = """# 087 — AI Model Benchmarks
+
+**Week 4, Day 2** · 12 min · no notebook
+
+## Claim
+
+Benchmarks are contaminated.
+
+## Open
+
+- Which leaderboards are still trustworthy?
+"""
+
+
+class LectureSyncTests(unittest.TestCase):
+    def write_lectures(self, tmp: Path) -> Path:
+        lectures = tmp / 'lectures'
+        (lectures / 'week5').mkdir(parents=True)
+        (lectures / 'week4').mkdir(parents=True)
+        (lectures / 'week5' / '108-simple-rag.md').write_text(LECTURE_NOTE, encoding='utf-8')
+        (lectures / 'week4' / '087-benchmarks.md').write_text(CONCEPT_ONLY_NOTE, encoding='utf-8')
+        (lectures / 'week5' / 'scratch.md').write_text('# not a lecture', encoding='utf-8')
+        return lectures
+
+    def test_notes_are_parsed_in_lecture_order(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            notes = lecture_sync.collect_lecture_notes(self.write_lectures(Path(tmp)))
+            self.assertEqual([n['number'] for n in notes], [87, 108])
+
+    def test_off_template_filenames_are_skipped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            notes = lecture_sync.collect_lecture_notes(self.write_lectures(Path(tmp)))
+            self.assertNotIn('scratch.md', {n['filename'] for n in notes})
+
+    def test_fields_come_from_the_note_body(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            notes = lecture_sync.collect_lecture_notes(self.write_lectures(Path(tmp)))
+            by_number = {n['number']: n for n in notes}
+            self.assertEqual(by_number[108]['week'], 5)
+            self.assertEqual(by_number[108]['notebook'], 'week5/day1.ipynb')
+            self.assertEqual(by_number[108]['open_count'], 2)
+            self.assertIn('Building a Simple RAG System', by_number[108]['title'])
+
+    def test_concept_only_lectures_report_no_notebook(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            notes = lecture_sync.collect_lecture_notes(self.write_lectures(Path(tmp)))
+            note = next(n for n in notes if n['number'] == 87)
+            self.assertIsNone(note['notebook'])
+            self.assertEqual(note['open_count'], 1)
+
+    def test_index_groups_by_week_and_totals_open_questions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            notes = lecture_sync.collect_lecture_notes(self.write_lectures(Path(tmp)))
+            index = lecture_sync.build_index(notes)
+            self.assertIn('## Week 4', index)
+            self.assertIn('## Week 5', index)
+            self.assertIn('3 open question(s)', index)
+            self.assertIn('week5/108-simple-rag.md', index)
+
+    def test_empty_index_is_still_valid(self):
+        self.assertIn('No lecture notes yet', lecture_sync.build_index([]))
+
+    def test_sync_publishes_notes_and_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            lectures = self.write_lectures(tmp_path)
+            docs = tmp_path / 'docs'
+            written = lecture_sync.sync_lectures(lectures, docs)
+            self.assertEqual(len(written), 3)
+            self.assertTrue((docs / 'lectures' / 'index.md').is_file())
+            published = docs / 'lectures' / 'week5' / '108-simple-rag.md'
+            self.assertTrue(published.is_file())
+            self.assertIn('Generated copy', published.read_text(encoding='utf-8'))
 
 
 class TopicPageTests(unittest.TestCase):

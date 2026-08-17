@@ -1,4 +1,4 @@
-<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/06trainingandfinetuning.md
+<!-- Generated copy. Source: notes/06-training-and-finetuning.md
      Edit the source file; this copy is overwritten on every extraction run. -->
 
 # Weeks 6–7 — From traditional ML to fine-tuning (frontier + QLoRA)

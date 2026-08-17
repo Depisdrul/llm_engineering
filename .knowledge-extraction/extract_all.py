@@ -19,6 +19,7 @@ from generators.content_generator import (
     generate_topic_pages,
     load_taxonomy,
 )
+from generators.lecture_sync import generate_lecture_index, sync_lectures
 from generators.reference_sync import generate_reference_index, sync_references
 from processors.llm_summarizer import LLMSummarizer
 
@@ -127,14 +128,21 @@ def summarize_phase(notebook_data, use_llm=False, provider='openai', model=None)
 
 
 def sync_references_phase():
-    """Phase 4: Publish the hand-written topic references into the docs tree."""
-    print("\n=== Phase 4: Publishing Topic References ===")
+    """Phase 4: Publish the hand-written notes - topic references and lectures."""
+    print("\n=== Phase 4: Publishing Notes ===")
     written = sync_references()
     generate_reference_index()
     for path in written:
-        print(f"  [OK] {Path(path).name}")
-    print(f"\n[OK] Published {len(written)} reference note(s)")
-    return written
+        print(f"  [OK] reference/{Path(path).name}")
+
+    generate_lecture_index()
+    lectures = sync_lectures()
+    for path in lectures:
+        print(f"  [OK] lectures/{Path(path).name}")
+
+    print(f"\n[OK] Published {len(written)} reference note(s), "
+          f"{len(lectures) - 1} lecture note(s)")
+    return written + lectures
 
 
 def generate_content_phase(notebook_data, summarizer=None):

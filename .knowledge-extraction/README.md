@@ -1,5 +1,9 @@
 # LLM Engineering Course - Knowledge Extraction System
 
+> **New session? Read [`notes/HANDOFF.md`](../notes/HANDOFF.md) first.** It is the
+> single re-entry point: what the layers are, what is verified, what is still
+> open, and why. This README only covers how to run the pipeline.
+
 Automated knowledge extraction pipeline for Ed Donner's LLM Engineering course. Extracts key concepts, code patterns, and business applications from 35+ Jupyter notebooks and organizes them into a searchable, topic-based knowledge base.
 
 ## Features
@@ -23,9 +27,9 @@ cd .knowledge-extraction
 pip install -r requirements.txt
 ```
 
-### 2. Generate Placeholder Content
+### 2. Regenerate the Site
 
-Create the initial knowledge base structure:
+Rebuild every page from the cached extraction and the hand-written notes:
 
 ```powershell
 python .knowledge-extraction\extract_all.py --generate-only

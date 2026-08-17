@@ -1,4 +1,4 @@
-<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/05ragandvectorsearch.md
+<!-- Generated copy. Source: notes/05-rag-and-vector-search.md
      Edit the source file; this copy is overwritten on every extraction run. -->
 
 # Week 5 — RAG, embeddings, and vector search

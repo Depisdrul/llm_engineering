@@ -1,4 +1,4 @@
-<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/07agentsanddeployment.md
+<!-- Generated copy. Source: notes/07-agents-and-deployment.md
      Edit the source file; this copy is overwritten on every extraction run. -->
 
 # Week 8 — Agents, multi-agent systems, and deployment

@@ -141,6 +141,7 @@ llms.bak/
 
 # mkdocs documentation
 /site
+knowledge-base/site/
 
 # mypy
 .mypy_cache/
@@ -215,3 +216,7 @@ week6/*.joblib
 week8/*.pth
 .claude/settings.local.json
 write_hf_token.txt
+
+# Course slide decks. Instructor's materials - keep them out of a repo that may
+# be the source of an upstream PR. See notes/LECTURE-DISTILL.md section 2.
+notes/lectures/_slides/

@@ -1,4 +1,4 @@
-<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/LECTUREDISTILL.md
+<!-- Generated copy. Source: notes/LECTURE-DISTILL.md
      Edit the source file; this copy is overwritten on every extraction run. -->
 
 # Lecture distillation — workflow, conventions, and template
@@ -11,27 +11,40 @@
 
 ## 1. Folder layout
 
-```
+```text
 notes/
+  HANDOFF.md                             ← re-entry point; read it first
   01-llm-foundations.md                  ← topic references (already written)
-  04-model-selection-benchmarks-leaderboards.md
+  04-model-selection-benchmarks-leaderboards.md   ← NOT YET FILED
   05-rag-and-vector-search.md
   06-training-and-finetuning.md
   07-agents-and-deployment.md
   08-api-keys-and-runnability.md
   LECTURE-DISTILL.md                     ← this file
+  OPEN-QUESTIONS.md                      ← merged from the notes' `Open` sections
   lectures/
-    _slides/
-      week1.pdf                          ← you download these once per week
-      week4.pdf
     week1/
       001-introduction.md
-      002-...
     week4/
       086-chinchilla-scaling-law.md
       087-ai-model-benchmarks.md
+    week5/
+      108-simple-rag-dictionary-lookup.md
     INDEX.md                             ← regenerated, links every lecture note
 ```
+
+Everything here is published into the MkDocs site by
+`python .knowledge-extraction/extract_all.py --generate-only`: the topic
+references become **Topic References**, the lecture notes and `INDEX.md` become
+**Lecture Notes**. The copies under `knowledge-base/docs/` are build output —
+edit the files above. A reference is only published once it is listed in
+`REFERENCE_NOTES` in `.knowledge-extraction/src/generators/reference_sync.py`,
+so a draft can sit in this folder without going live.
+
+Decks are read live from an open Drive tab (§2), so no deck belongs in git.
+`notes/lectures/_slides/` is `.gitignore`d for the case where one gets
+downloaded anyway — they're the instructor's materials and you may open an
+upstream PR from this repo someday.
 
 **Filename rule:** `NNN-kebab-slug.md`, where `NNN` is the **Udemy lecture number, zero-padded to 3**, and the slug is a short form of the lecture title. Zero-padding makes `ls` and git sort in course order, which matters once you have 200 files. Never renumber — if Udemy reorders lectures, keep the original number and note the drift in the file.
 
@@ -39,15 +52,31 @@ notes/
 
 ---
 
-## 2. Getting the slides — do this once per week
+## 2. The slides — just leave them open in a tab
 
-The slides are not on the public site. They live in a Google Drive folder linked from the [course resources page](https://edwarddonner.com/2024/11/13/llm-engineering-resources/), accessible with your Google account.
+Don't download them. A browser session reads a Google Slides deck straight from an open tab, so exporting to PDF buys nothing.
 
-1. Open the Drive folder, find the deck for the week you're studying.
-2. `File > Download > PDF Document`.
-3. Save as `notes/lectures/_slides/weekN.pdf`.
+Where they live: **not on Udemy** — a Google Drive folder linked from the [course resources page](https://edwarddonner.com/2024/11/13/llm-engineering-resources/). Structure, verified:
 
-That's it. Once the PDF is in the repo, any session with file access can read the relevant pages and fold them into the note. Slides carry the diagrams, the numbers, and the structure that spoken narration only gestures at — they are the higher-value input of the two.
+```text
+AI Engineer Core Track/          ← drive.google.com/drive/folders/1GMXbdgkqnZfCRcIdoUVBBB-hxeN4Lo06
+  Week 1/ … Week 8/
+    Copy of LLM - Week 5 Day 1   ← Google Slides, ~12–25 MB each
+    Copy of LLM - Week 5 Day 2
+    …Day 3, Day 4, Day 5
+```
+
+**Decks are per-day, not per-week.** Five per week, one per "Day N". So before distilling, open the deck matching the *day* of the lecture — the Day number is in the Udemy lecture title (`107. Day 1 - …`).
+
+Working procedure:
+
+1. Open the Drive folder for the week, double-click the deck for the day → it opens in its own tab.
+2. Leave it open. Tell the session the lecture number; it reads both the transcript panel and the deck tab.
+3. One deck covers all lectures for that day (Day 1 of week 5 is 11 slides across lectures 106–111), so you open it once per five-or-so lectures, not once per lecture.
+
+**Slides beat narration where they disagree.** They carry the figures, the diagrams, and — most usefully — the instructor's own framing and section labels, which the spoken version only gestures at. They also *pre-announce* the next lectures, so a deck read at lecture 108 tells you what 109–111 will claim, which is when it is cheapest to flag a claim for verification.
+
+If a deck ever won't load in a tab, fall back to `File > Download > PDF`, save it anywhere, and attach it to the conversation.
 
 ---
 
@@ -57,7 +86,7 @@ Per lecture, the cycle is about two minutes of your time:
 
 1. **You:** open the lecture on Udemy and open its transcript panel.
 2. **You:** say `distill 87` (or `distill 87 slides 12-18` if you know which slides apply).
-3. **Session:** reads the open transcript panel, reads the matching pages of `_slides/weekN.pdf` if present, and cross-checks any factual claim against the topic references in `notes/`.
+3. **Session:** reads the open transcript panel, reads the matching slides from the open *Week N Day D* deck tab, and cross-checks any factual claim against the topic references in `notes/`.
 4. **Session:** writes `notes/lectures/weekN/NNN-slug.md` using the template in §4.
 5. **You:** glance at it, click to the next lecture.
 
@@ -81,7 +110,7 @@ Copy this structure exactly. Fixed sections make the files diffable, greppable, 
 ```markdown
 # NNN — <Lecture title as shown on Udemy>
 
-**Week N, Day D** · <MM> min · `<repo path or "no notebook">` · slides `weekN.pdf` pp. <a–b>
+**Week N, Day D** · <MM> min · `<repo path or "no notebook">` · deck *LLM - Week N Day D* slides <a–b>
 
 ## Claim
 <One or two sentences: what this lecture is actually asserting. Not "this lecture covers X"
@@ -118,9 +147,15 @@ this is the re-entry hook that makes a monthly cadence survivable.>
 
 ## 5. Index regeneration
 
-After each batch, regenerate `notes/lectures/INDEX.md`: one line per note, in numeric order, with week, title, whether it has a notebook, and the count of open questions. That file is what you open at the *start* of a block to remember where you were — which is the actual problem being solved here, not note completeness.
+`notes/lectures/INDEX.md` is one line per note, in numeric order, with week, title, whether it has a notebook, and the count of open questions. That file is what you open at the *start* of a block to remember where you were — which is the actual problem being solved here, not note completeness.
 
-Grouping by week with a per-week open-question count at the top is enough. Don't over-engineer it.
+It is generated, not written. After each batch:
+
+```bash
+python .knowledge-extraction/extract_all.py --generate-only
+```
+
+The generator reads the note's H1 for the title, the `**Week N, Day D**` line for the week, the first `.ipynb` in backticks for the notebook, and counts the bullets under `## Open`. A note whose filename is off-template (`NNN-slug.md`) is skipped silently — if a note is missing from the index, check its filename first.
 
 ---
 
@@ -133,7 +168,7 @@ Run this after a batch of distillations, in a local Claude Code session with the
 3. **Merge the `Corrections` sections** into the topic references' corrections tables. Deduplicate.
 4. **Collect all `Open` items** into a single `notes/OPEN-QUESTIONS.md`, grouped by theme rather than by lecture, with the source lecture numbers as references. Themes recur across weeks; lectures don't.
 5. **Reconcile against executed notebooks.** For any lecture whose notebook you've run, check that the note's `Code / demo` section matches what actually happened — the rendered Markdown from `nb2md.py` is the ground truth here, not the lecture.
-6. Regenerate `INDEX.md`.
+6. Regenerate the site and the index: `python .knowledge-extraction/extract_all.py --generate-only`, then `cd knowledge-base && python -m mkdocs build --strict`. The strict build is what catches a cross-link you broke while promoting content.
 7. Commit. `git log -p notes/` then becomes a record of how your understanding changed between blocks, which raw `.ipynb` diffs can never give you.
 
 ---

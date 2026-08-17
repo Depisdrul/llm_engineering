@@ -73,6 +73,10 @@ nav:
       - API Keys & Runnability: reference/api-keys-and-runnability.md
       - Lecture Distillation Workflow: reference/lecture-distillation-workflow.md
 
+  # Individual lecture notes are reachable from the index, not listed here -
+  # the course has 210 lectures and the nav would be unreadable.
+  - Lecture Notes: lectures/index.md
+
   - Topics:
       - Foundations:
           - LLM APIs & Integration: topics/01-foundations/llm-apis.md

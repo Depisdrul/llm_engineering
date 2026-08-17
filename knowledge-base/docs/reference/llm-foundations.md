@@ -1,4 +1,4 @@
-<!-- Generated copy. Source: .knowledge-extraction/improvements-from-chrome-session/01llmfoundations.md
+<!-- Generated copy. Source: notes/01-llm-foundations.md
      Edit the source file; this copy is overwritten on every extraction run. -->
 
 # Weeks 1–3 — LLM foundations: transformers, tokenization, context, MoE
