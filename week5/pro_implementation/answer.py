@@ -1,22 +1,22 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-from chromadb import PersistentClient
-from litellm import completion
-from pydantic import BaseModel, Field
 from pathlib import Path
-from tenacity import retry, wait_exponential
 
+from chromadb import PersistentClient
+from dotenv import load_dotenv
+from litellm import completion
+from openai import OpenAI
+from pydantic import BaseModel, Field
+from tenacity import retry, wait_exponential
 
 load_dotenv(override=True)
 
 # MODEL = "openai/gpt-4.1-nano"
-MODEL = "groq/openai/gpt-oss-120b"
-DB_NAME = str(Path(__file__).parent.parent / "preprocessed_db")
-KNOWLEDGE_BASE_PATH = Path(__file__).parent.parent / "knowledge-base"
-SUMMARIES_PATH = Path(__file__).parent.parent / "summaries"
+MODEL = 'groq/openai/gpt-oss-120b'
+DB_NAME = str(Path(__file__).parent.parent / 'preprocessed_db')
+KNOWLEDGE_BASE_PATH = Path(__file__).parent.parent / 'knowledge-base'
+SUMMARIES_PATH = Path(__file__).parent.parent / 'summaries'
 
-collection_name = "docs"
-embedding_model = "text-embedding-3-large"
+collection_name = 'docs'
+embedding_model = 'text-embedding-3-large'
 wait = wait_exponential(multiplier=1, min=10, max=240)
 
 openai = OpenAI()
@@ -30,12 +30,15 @@ FINAL_K = 10
 SYSTEM_PROMPT = """
 You are a knowledgeable, friendly assistant representing the company Insurellm.
 You are chatting with a user about Insurellm.
-Your answer will be evaluated for accuracy, relevance and completeness, so make sure it only answers the question and fully answers it.
+Your answer will be evaluated for accuracy, relevance and completeness, so make
+sure it only answers the question and fully answers it.
 If you don't know the answer, say so.
-For context, here are specific extracts from the Knowledge Base that might be directly relevant to the user's question:
+For context, here are specific extracts from the Knowledge Base that might be
+directly relevant to the user's question:
 {context}
 
-With this context, please answer the user's question. Be accurate, relevant and complete.
+With this context, please answer the user's question. Be accurate, relevant
+and complete.
 """
 
 
@@ -46,7 +49,10 @@ class Result(BaseModel):
 
 class RankOrder(BaseModel):
     order: list[int] = Field(
-        description="The order of relevance of chunks, from most relevant to least relevant, by chunk id number"
+        description=(
+            'The order of relevance of chunks, from most relevant to least '
+            'relevant, by chunk id number'
+        )
     )
 
 
@@ -54,47 +60,62 @@ class RankOrder(BaseModel):
 def rerank(question, chunks):
     system_prompt = """
 You are a document re-ranker.
-You are provided with a question and a list of relevant chunks of text from a query of a knowledge base.
-The chunks are provided in the order they were retrieved; this should be approximately ordered by relevance, but you may be able to improve on that.
-You must rank order the provided chunks by relevance to the question, with the most relevant chunk first.
-Reply only with the list of ranked chunk ids, nothing else. Include all the chunk ids you are provided with, reranked.
+You are provided with a question and a list of relevant chunks of text from a
+query of a knowledge base.
+The chunks are provided in the order they were retrieved; this should be
+approximately ordered by relevance, but you may be able to improve on that.
+You must rank order the provided chunks by relevance to the question,
+with the most relevant chunk first.
+Reply only with the list of ranked chunk ids, nothing else. Include all the
+chunk ids you are provided with, reranked.
 """
-    user_prompt = f"The user has asked the following question:\n\n{question}\n\nOrder all the chunks of text by relevance to the question, from most relevant to least relevant. Include all the chunk ids you are provided with, reranked.\n\n"
-    user_prompt += "Here are the chunks:\n\n"
+    user_prompt = (
+        f'The user has asked the following question:\n\n{question}\n\n'
+        'Order all the chunks of text by relevance to the question, '
+        'from most relevant to least relevant. '
+        'Include all the chunk ids you are provided with, reranked.\n\n'
+    )
+    user_prompt += 'Here are the chunks:\n\n'
     for index, chunk in enumerate(chunks):
-        user_prompt += f"# CHUNK ID: {index + 1}:\n\n{chunk.page_content}\n\n"
-    user_prompt += "Reply only with the list of ranked chunk ids, nothing else."
+        user_prompt += f'# CHUNK ID: {index + 1}:\n\n{chunk.page_content}\n\n'
+    user_prompt += 'Reply only with the list of ranked chunk ids, nothing else.'
     messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
+        {'role': 'system', 'content': system_prompt},
+        {'role': 'user', 'content': user_prompt},
     ]
-    response = completion(model=MODEL, messages=messages, response_format=RankOrder)
+    response = completion(
+        model=MODEL, messages=messages, response_format=RankOrder
+    )
     reply = response.choices[0].message.content
     order = RankOrder.model_validate_json(reply).order
     return [chunks[i - 1] for i in order]
 
 
 def make_rag_messages(question, history, chunks):
-    context = "\n\n".join(
-        f"Extract from {chunk.metadata['source']}:\n{chunk.page_content}" for chunk in chunks
+    context = '\n\n'.join(
+        f'Extract from {chunk.metadata["source"]}:\n{chunk.page_content}'
+        for chunk in chunks
     )
     system_prompt = SYSTEM_PROMPT.format(context=context)
     return (
-        [{"role": "system", "content": system_prompt}]
+        [{'role': 'system', 'content': system_prompt}]
         + history
-        + [{"role": "user", "content": question}]
+        + [{'role': 'user', 'content': question}]
     )
 
 
 @retry(wait=wait)
 def rewrite_query(question, history=None):
-    """Rewrite the user's question to be a more specific question that is more likely to surface relevant content in the Knowledge Base."""
+    """Rewrite the user's question to be a more specific question that
+    is more likely to surface relevant content in the Knowledge Base.
+    """
     if history is None:
         history = []
 
     message = f"""
 You are in a conversation with a user.
-You are about to look up information in a Knowledge Base to answer the user's question.
+You are about to look up information in a Knowledge Base to answer
+the user's question.
 
 This is the history of your conversation so far with the user:
 {history}
@@ -102,8 +123,10 @@ This is the history of your conversation so far with the user:
 And this is the user's current question:
 {question}
 
-Since the conversation is contextual, understand the meaning of the user question and add details based on the history.
-Condense everything in a single contextually-rich VERY short and specific question, most likely to surface content.
+Since the conversation is contextual, understand the meaning of the user
+question and add details based on the history.
+Condense everything in a single contextually-rich VERY short and specific
+question, most likely to surface content.
 
 EXAMPLE:
 user: Who is the founder? -> Query: who is the founder?
@@ -113,7 +136,9 @@ user: What role covers? -> Query: What role FooBar covers?
 
 IMPORTANT: Respond ONLY with the precise knowledgebase query, nothing else.
 """
-    response = completion(model=MODEL, messages=[{"role": "system", "content": message}])
+    response = completion(
+        model=MODEL, messages=[{'role': 'system', 'content': message}]
+    )
     return response.choices[0].message.content
 
 
@@ -127,10 +152,16 @@ def merge_chunks(chunks, reranked):
 
 
 def fetch_context_unranked(question):
-    query = openai.embeddings.create(model=embedding_model, input=[question]).data[0].embedding
+    query = (
+        openai.embeddings.create(model=embedding_model, input=[question])
+        .data[0]
+        .embedding
+    )
     results = collection.query(query_embeddings=[query], n_results=RETRIEVAL_K)
     chunks = []
-    for result in zip(results["documents"][0], results["metadatas"][0]):
+    for result in zip(
+        results['documents'][0], results['metadatas'][0], strict=True
+    ):
         chunks.append(Result(page_content=result[0], metadata=result[1]))
     return chunks
 
@@ -146,9 +177,11 @@ def fetch_context(original_question, history=None):
 
 
 @retry(wait=wait)
-def answer_question(question: str, history: list[dict] = []) -> tuple[str, list]:
-    """
-    Answer a question using RAG and return the answer and the retrieved context
+def answer_question(
+    question: str, history: list[dict] = []
+) -> tuple[str, list]:
+    """Answer a question using RAG and return the answer
+    and the retrieved context
     """
     chunks = fetch_context(question, history)
     messages = make_rag_messages(question, history, chunks)
