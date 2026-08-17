@@ -325,10 +325,12 @@ def gather(target: Path, recursive: bool, excludes: list[str]) -> list[Path]:
     found = sorted(target.glob(pattern))
     out = []
     for p in found:
-        s = str(p)
-        if ".ipynb_checkpoints" in s:
+        # Dotted directories below the target hold tooling, not course material:
+        # .venv ships third-party notebooks that would otherwise land in the audit
+        # counts, and .ipynb_checkpoints holds stale copies of real ones.
+        if any(part.startswith(".") for part in p.relative_to(target).parts[:-1]):
             continue
-        if any(x in s for x in excludes):
+        if any(x in str(p) for x in excludes):
             continue
         out.append(p)
     return out

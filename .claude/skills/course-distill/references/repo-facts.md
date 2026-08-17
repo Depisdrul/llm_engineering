@@ -5,7 +5,8 @@ Verified by cloning and inspecting the repo directly, then re-verified against t
 Re-run the audit at the start of a study block:
 
 ```bash
-python study/nb2md.py . --recursive \n  --exclude community-contributions --exclude community_contributions --audit
+python study/nb2md.py . --recursive \
+  --exclude community-contributions --exclude community_contributions --audit
 ```
 
 Not the same course: `ed-donner/agents` (Agentic Track), `ed-donner/agentic` (an O'Reilly live event — a near-miss name trap), `ed-donner/production` (Production Track), `ed-donner/tech2ai`.
@@ -14,7 +15,7 @@ Not the same course: `ed-donner/agents` (Agentic Track), `ed-donner/agentic` (an
 
 Eight `week*` folders, plus `guides/` (14 notebooks), `setup/`, `extras/`, `assets/`, `community-contributions/`.
 
-**66 core notebooks. ~3,044 community-contribution notebooks across ~273 folders.** Always exclude both `community-contributions` and `community_contributions` from repo-wide operations — the spelling is inconsistent between weeks, and week 7 uses the underscore form.
+**65 core notebooks. ~3,044 community-contribution notebooks across ~273 folders.** Always exclude both `community-contributions` and `community_contributions` from repo-wide operations — the spelling is inconsistent between weeks, and week 7 uses the underscore form.
 
 Notebooks are `day1.ipynb` … `day5.ipynb`. Week 4 has no `day1`/`day2` notebook. Week 7 has a file literally named `day3 and 4.ipynb` (spaces included).
 
@@ -50,7 +51,7 @@ No root `.gitattributes`, no `.pre-commit-config.yaml`, no `nbstripout`, no `.gi
 
 **Executed outputs commit verbatim.** The clear-outputs rule is a human PR convention documented in `guides/03_git_and_github.ipynb` and `guides/05_notebooks.ipynb`, enforced by nothing.
 
-Current state in this fork: **11 executed, 47 stripped, 8 Colab stubs** of 66. Upstream ships 4 executed; the other 7 are notebooks Bea ran locally and committed with their outputs, which is deliberate — a saved output is the evidence the extraction pipeline reads.
+Current state in this fork: **12 executed, 45 stripped, 8 Colab stubs** of 65. Upstream ships 4 executed; the other 8 are notebooks Bea ran locally and committed with their outputs, which is deliberate — a saved output is the evidence the extraction pipeline reads.
 
 ## litellm is the repo's own idiom
 

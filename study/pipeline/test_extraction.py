@@ -77,6 +77,28 @@ class Nb2mdLoaderTests(unittest.TestCase):
         second = nb2md_loader.load_nb2md()
         self.assertIs(first, second)
 
+    def test_gather_skips_dotted_directories(self):
+        nb2md = nb2md_loader.load_nb2md()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for rel in ('week1/day1.ipynb',
+                        '.venv/Lib/site-packages/vendor/demo.ipynb',
+                        'week1/.ipynb_checkpoints/day1-checkpoint.ipynb'):
+                target = root / rel
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text('{"cells": []}', encoding='utf-8')
+            found = nb2md.gather(root, recursive=True, excludes=[])
+        self.assertEqual([p.name for p in found], ['day1.ipynb'])
+
+    def test_gather_does_not_read_dots_in_the_target_path(self):
+        nb2md = nb2md_loader.load_nb2md()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / '.hidden-workspace'
+            (root / 'week1').mkdir(parents=True)
+            (root / 'week1' / 'day1.ipynb').write_text('{"cells": []}', encoding='utf-8')
+            found = nb2md.gather(root, recursive=True, excludes=[])
+        self.assertEqual([p.name for p in found], ['day1.ipynb'])
+
 
 class HeadingFilterTests(unittest.TestCase):
     def test_clean_heading_strips_decoration(self):
