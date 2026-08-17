@@ -11,7 +11,7 @@ why things are shaped the way they are, and where everything else lives.
 | --- | --- |
 | [`notes/`](notes/) | Hand-written. **The only files you edit by hand.** Topic references, per-lecture notes, open questions. |
 | [`pipeline/`](pipeline/) | The extractor — code, config, templates, tests. |
-| `docs/` | MkDocs content. Build output, except `index.md`. |
+| `docs/` | MkDocs content. Build output, except `projects/` and `quick-ref/`. |
 | `nb2md.py` | The repo's single notebook parser. Standalone and stdlib-only. |
 | `_site/` | Rendered HTML. Gitignored. |
 

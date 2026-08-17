@@ -7,7 +7,7 @@
 
 Reads the course notebooks and the hand-written notes in [`../notes/`](../notes/),
 and writes the MkDocs content in `../docs/`. Everything in `../docs/` is build
-output except `index.md`.
+output except `projects/` and `quick-ref/`, which no generator writes.
 
 ## What it does, in five phases
 
