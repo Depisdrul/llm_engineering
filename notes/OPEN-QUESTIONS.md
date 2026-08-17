@@ -63,10 +63,9 @@ Source lectures are in brackets.
   coefficients, benchmark item counts, model version claims, and anything on a
   client-side-rendered leaderboard — several are tagged `UNVERIFIED` precisely
   because a fetch tool cannot read those pages but a browser can.
-- **`04-model-selection-benchmarks-leaderboards.md` is not filed.** Written in
-  the browser session, never downloaded. Until it lands, `model-selection` is
-  one of two topics with no authoritative layer, and the corrections table that
-  `LECTURE-DISTILL.md` §3 tells distillers to check does not exist.
+- **The `UNVERIFIED` tags in `04-…md` are concentrated on leaderboards.**
+  Client-side-rendered pages a fetch tool cannot read but a browser can — so
+  these are cheap to clear from a browser session and impossible from here.
 
 ## Course material and repo
 

@@ -33,6 +33,7 @@ topics:
     folder: 02-core-concepts
     description: Model capabilities, pricing, reasoning vs chat, temperature
     weeks: [2, 3]
+    reference: model-selection-benchmarks
 
   - id: tokenization
     name: Tokenization & Context

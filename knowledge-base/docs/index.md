@@ -23,6 +23,7 @@ For the actual course content, please enroll in the course.
 Written from primary sources rather than lecture transcripts. Start here — these supersede the generated pages below.
 
 - [LLM Foundations (Weeks 1-3)](reference/llm-foundations.md)
+- [Model Selection & Benchmarks (Week 4)](reference/model-selection-benchmarks.md)
 - [RAG & Vector Search (Week 5)](reference/rag-and-vector-search.md)
 - [Training & Fine-Tuning (Weeks 6-7)](reference/training-and-finetuning.md)
 - [Agents & Deployment (Week 8)](reference/agents-and-deployment.md)

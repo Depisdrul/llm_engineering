@@ -12,10 +12,10 @@ course_url: https://edwarddonner.com/
 
 ## Overview
 
-!!! note "No primary-source reference yet"
+!!! abstract "Primary reference: [Model Selection & Benchmarks (Week 4)](../../reference/model-selection-benchmarks.md)"
 
-    This page is assembled from the course notebooks only. It has not been
-    cross-checked against primary sources, so treat dated claims with caution.
+    That page is written from primary sources and supersedes anything below it.
+    This page maps the concept back to the notebooks that demonstrate it.
 
 Model capabilities, pricing, reasoning vs chat, temperature
 

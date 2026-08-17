@@ -39,6 +39,13 @@ REFERENCE_NOTES: list[dict[str, Any]] = [
         'aliases': ['01llmfoundations'],
     },
     {
+        'source': '04-model-selection-benchmarks-leaderboards.md',
+        'slug': 'model-selection-benchmarks',
+        'title': 'Model Selection & Benchmarks (Week 4)',
+        'aliases': ['04modelselectionbenchmarksleaderboards',
+                    '04-model-selection-benchmarks-leaderboards'],
+    },
+    {
         'source': '05-rag-and-vector-search.md',
         'slug': 'rag-and-vector-search',
         'title': 'RAG & Vector Search (Week 5)',

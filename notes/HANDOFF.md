@@ -44,23 +44,19 @@ facts migrate up into the topic references and leave a link behind.
 | Reference | Covers | Topics mapped |
 | --- | --- | --- |
 | `01-llm-foundations.md` | transformers, tokenization, context, KV cache, prompt caching, MoE | prompt-engineering, tokenization |
+| `04-model-selection-benchmarks-leaderboards.md` | scaling laws, benchmarks, contamination, leaderboards, EU/GDPR | model-selection |
 | `05-rag-and-vector-search.md` | embeddings, chunking, vector stores, reranking, RAG eval | rag-systems, embeddings, vector-databases |
 | `06-training-and-finetuning.md` | LoRA, QLoRA, quantization, hyperparameters, DPO | fine-tuning, dataset-prep, evaluation, gpu-computing |
 | `07-agents-and-deployment.md` | agent framing, multi-agent, MCP, deployment, Gradio | agent-architectures, tool-use, multi-agent, deployment, ui-interaction |
 | `08-api-keys-and-runnability.md` | what runs with a Google-only key, litellm swaps | llm-apis, multi-model |
 | `LECTURE-DISTILL.md` | the per-lecture distillation workflow | — |
 
-**`04-model-selection-benchmarks-leaderboards.md` (555 lines) was written and
-never filed.** It is not on this machine — not in the repo, not in `Downloads`.
-Every other file the browser session produced matches its stated line count
-exactly, so this one was simply never downloaded. It covers scaling laws,
-benchmarks, contamination, leaderboards, model selection and EU/GDPR, and
-`LECTURE-DISTILL.md` §3 tells distillers to check its corrections table.
-**Retrieve it from that session before the session is gone**, or it has to be
-rewritten from scratch.
+**`dev-tools` is the only topic with no durable layer**, and none is planned —
+Jupyter and git workflow are covered well enough by `guides/`.
 
-`model-selection` and `dev-tools` are the two topics with no durable layer. The
-first is blocked on the file above; the second has no reference planned.
+`04-model-selection-benchmarks-leaderboards.md` opens with "read the corrections
+table (§7) first — several things this week teaches are outdated, and one of them
+will actively mislead you." Take that literally before doing week 4.
 
 **Numbering gap `02-`/`03-` is deliberate** — weeks 1–3 were merged into `01-`.
 Leave the gap or fill it if week 2/3 material grows.
@@ -263,22 +259,18 @@ which carries unrelated linting and knowledge-base changes.
 
 ## 8. Next steps, in priority order
 
-1. **Retrieve `04-model-selection-benchmarks-leaderboards.md`** from the browser
-   session before it is gone (§1). Then add it to `REFERENCE_NOTES`, set
-   `reference:` on the `model-selection` topic in
-   `.knowledge-extraction/config/taxonomy.yaml`, and add a nav line in
-   `knowledge-base/mkdocs.yml`.
-2. **Run the distillation loop.** Everything built so far is scaffolding for it.
+1. **Run the distillation loop.** Everything built so far is scaffolding for it.
    The concept-only lectures are the ones worth doing — they are the ones with no
-   other source. 209 lectures remain; you do not need them all.
-3. **Answer the two cheap items in `OPEN-QUESTIONS.md`** — the token size of
+   other source. 208 lectures remain; you do not need them all. Lectures 109 and
+   110 were watched but skipped; see `OPEN-QUESTIONS.md`.
+2. **Answer the two cheap items in `OPEN-QUESTIONS.md`** — the token size of
    `week5/knowledge-base/`, and whether the OpenAI fine-tuning account is
    blocked. Both change what you do next, and both take minutes.
-4. **Fact-check pass on the topic references.** Never run. Highest-risk items are
+3. **Fact-check pass on the topic references.** Never run. Highest-risk items are
    listed in `OPEN-QUESTIONS.md`; the `UNVERIFIED` tags mark the ones that need a
-   browser rather than a fetch tool.
-5. **PR nb2md upstream** (§7).
-6. **Download the 8 Colab stubs**, if week 3 / week 7 content matters to you.
+   browser rather than a fetch tool, and they cluster in `04-…md`.
+4. **PR nb2md upstream** (§7).
+5. **Download the 8 Colab stubs**, if week 3 / week 7 content matters to you.
 
 ---
 

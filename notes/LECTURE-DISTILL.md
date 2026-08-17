@@ -12,7 +12,7 @@
 notes/
   HANDOFF.md                             ← re-entry point; read it first
   01-llm-foundations.md                  ← topic references (already written)
-  04-model-selection-benchmarks-leaderboards.md   ← NOT YET FILED
+  04-model-selection-benchmarks-leaderboards.md
   05-rag-and-vector-search.md
   06-training-and-finetuning.md
   07-agents-and-deployment.md
@@ -88,6 +88,8 @@ Per lecture, the cycle is about two minutes of your time:
 5. **You:** glance at it, click to the next lecture.
 
 **Batching:** do a run of 5–10 lectures in one sitting, then let a local session in the repo do the integration pass (§6). Don't interleave distillation and integration — they need different attention.
+
+**The browser session runs this as a skill.** That skill is not stored in this repo, so it can drift from this file without anything flagging it. **This file is the contract** — where the two disagree, this file wins, and the skill is what should change. If you edit the skill, mirror the change here; §4's template and §5's filename rule in particular are what the local index generator parses, and a note that doesn't match them is skipped silently.
 
 **Rules for the session doing the distilling:**
 
