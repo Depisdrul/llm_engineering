@@ -72,7 +72,7 @@ Business Applications Hopefully this hardly needs to be stated! You now have the
 **Key Concepts:**
 
 - A bit more about what Gradio actually does
-- Price alert: each time I generate an image it costs about 4 cents - don't go crazy with images!
+- Price alert: each time I generate an image it costs about 3 cents - don't go crazy with images!
 - The 3 types of Gradio UI
 
 *7 cell(s) carry saved output — this notebook is reviewable without re-running.*

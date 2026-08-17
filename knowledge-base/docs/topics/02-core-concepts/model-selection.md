@@ -41,7 +41,7 @@ Covered in week(s) 2, 3: 7 notebook(s) with content in the repo, 5 Colab stub(s)
 ### Week 2 Day 5 — Project - Airline AI Assistant
 
 - A bit more about what Gradio actually does
-- Price alert: each time I generate an image it costs about 4 cents - don't go crazy with images!
+- Price alert: each time I generate an image it costs about 3 cents - don't go crazy with images!
 - The 3 types of Gradio UI
 
 ### Week 2 Day 4 — Project - Airline AI Assistant

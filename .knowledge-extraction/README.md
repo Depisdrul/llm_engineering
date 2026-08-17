@@ -67,7 +67,8 @@ python .knowledge-extraction\extract_all.py
 This will:
 - Extract all notebooks (structure, code, concepts)
 - Generate week summaries
-- Create topic placeholder pages
+- Generate topic pages from the extracted notebooks
+- Publish the hand-written primary-source references to docs/reference/
 - No LLM calls = instant and free
 
 ### With Local AI (FREE, Best Option!)
@@ -161,10 +162,9 @@ knowledge-base/
 
 ### Initial Setup (One-time, ~1 hour)
 
-1. Generate placeholder structure
-2. Run extraction pipeline on all weeks
-3. Review and manually enhance key topic pages
-4. Build MkDocs site
+1. Run the extraction pipeline on all weeks
+2. Review the generated topic pages against their primary-source references
+3. Build the MkDocs site
 
 ### Ongoing Maintenance (After each session, ~15 min)
 

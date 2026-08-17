@@ -25,14 +25,14 @@ Covered in week(s) 1: 5 notebook(s) with content in the repo.
 
 ### Week 1 Day 1 — YOUR FIRST LAB
 
+- Also, be sure to read README.md!
+- Answers to the most common questions
 - Your first Frontier LLM Project
 - If you're new to working in "Notebooks" (also known as Labs or Jupyter Lab)
 - I am here to help
 - More troubleshooting
 - If this is old hat!
 - If necessary, install Cursor Extensions
-- Troubleshooting if you have problems
-- Types of prompts
 
 ### Week 1 Day 5 — A full business solution
 

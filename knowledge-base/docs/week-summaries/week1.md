@@ -4,7 +4,7 @@
 
 ## Overview
 
-5 notebook(s): 5 with content in the repo, 0 Colab stub(s). 23 distinct concepts extracted.
+5 notebook(s): 5 with content in the repo, 0 Colab stub(s). 25 distinct concepts extracted.
 
 ### Day 1: YOUR FIRST LAB
 
@@ -12,14 +12,14 @@
 
 **Key Concepts:**
 
+- Also, be sure to read README.md!
+- Answers to the most common questions
 - Your first Frontier LLM Project
 - If you're new to working in "Notebooks" (also known as Labs or Jupyter Lab)
 - I am here to help
 - More troubleshooting
 - If this is old hat!
 - If necessary, install Cursor Extensions
-- Troubleshooting if you have problems
-- Types of prompts
 
 ### Day 2: Welcome to the Day 2 Lab!
 
