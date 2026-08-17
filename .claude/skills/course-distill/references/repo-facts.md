@@ -90,7 +90,7 @@ Grep-based mention counts, so a strong signal rather than a contract — a noteb
 Google Drive folder linked from `edwarddonner.com/2024/11/13/llm-engineering-resources/` — **not on the course platform**.
 
 ```text
-AI Engineer Core Track/
+AI Engineer Core Track/          <- drive.google.com/drive/folders/1GMXbdgkqnZfCRcIdoUVBBB-hxeN4Lo06
   Week 1/ … Week 8/
     Copy of LLM - Week N Day 1     ← Google Slides, 12–25 MB
     … Day 2, Day 3, Day 4, Day 5

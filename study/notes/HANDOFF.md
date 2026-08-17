@@ -13,8 +13,13 @@ claims, and the uncomfortable point first.
 this repo, with one exception — **one-shot lecture distillation stays in a
 browser session**, because it needs to read an open Udemy transcript panel and an
 open Google Slides tab. That session's only output is a
-`study/notes/lectures/weekN/NNN-slug.md` file, filed here. See
-[LECTURE-DISTILL.md](LECTURE-DISTILL.md).
+`study/notes/lectures/weekN/NNN-slug.md` file, filed here.
+
+The workflow is the `course-distill` skill at `.claude/skills/course-distill/` —
+template, section discipline, correction-hunting patterns. The browser holds its
+own copy at `claude.ai/customize/skills`, and those two can drift with nothing to
+flag it; mirror any edit into the repo copy in the same sitting.
+[LECTURE-DISTILL.md](LECTURE-DISTILL.md) covers only the repo side.
 
 ---
 
@@ -49,7 +54,7 @@ facts migrate up into the topic references and leave a link behind.
 | `06-training-and-finetuning.md` | LoRA, QLoRA, quantization, hyperparameters, DPO | fine-tuning, dataset-prep, evaluation, gpu-computing |
 | `07-agents-and-deployment.md` | agent framing, multi-agent, MCP, deployment, Gradio | agent-architectures, tool-use, multi-agent, deployment, ui-interaction |
 | `08-api-keys-and-runnability.md` | what runs with a Google-only key, litellm swaps | llm-apis, multi-model |
-| `LECTURE-DISTILL.md` | the per-lecture distillation workflow | — |
+| `LECTURE-DISTILL.md` | where lecture notes go and how they publish | — |
 
 **`dev-tools` is the only topic with no durable layer**, and none is planned —
 Jupyter and git workflow are covered well enough by `guides/`.
@@ -80,7 +85,7 @@ study/
   notes/               ← HAND-WRITTEN. The only files you edit by hand.
     HANDOFF.md         ← this file
     01-…08-*.md        ← topic references
-    LECTURE-DISTILL.md ← distillation spec
+    LECTURE-DISTILL.md ← repo side of the lecture workflow
     OPEN-QUESTIONS.md  ← merged `Open` sections, grouped by theme
     lectures/
       INDEX.md         ← generated
