@@ -141,7 +141,7 @@ llms.bak/
 
 # mkdocs documentation
 /site
-knowledge-base/site/
+study/_site/
 
 # mypy
 .mypy_cache/
@@ -218,5 +218,5 @@ week8/*.pth
 write_hf_token.txt
 
 # Course slide decks. Instructor's materials - keep them out of a repo that may
-# be the source of an upstream PR. See notes/LECTURE-DISTILL.md section 2.
-notes/lectures/_slides/
+# be the source of an upstream PR. See study/notes/LECTURE-DISTILL.md section 2.
+study/notes/lectures/_slides/

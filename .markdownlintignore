@@ -3,10 +3,7 @@ community-contributions/
 **/community-contributions/
 **/community_contributions/
 
-# MkDocs build output. These are copies of notes/ and of generated pages;
-# lint the sources instead.
-knowledge-base/docs/reference/
-knowledge-base/docs/lectures/
-knowledge-base/docs/topics/
-knowledge-base/docs/weeks/
-knowledge-base/site/
+# MkDocs build output. study/docs/ is generated from study/notes/ and from the
+# notebooks; lint the sources instead.
+study/docs/
+study/_site/
