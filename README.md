@@ -2,31 +2,36 @@
 
 ## Your 8 week journey to proficiency starts today
 
-![Voyage](assets/voyage.jpg)
+![Voyage](assets/core.jpg)
 
 _If you're looking at this in Cursor, please right click on the filename in the Explorer on the left, and select "Open preview", to view the formatted version._
 
 I'm so happy you're joining me on this path. We'll be building immensely satisfying projects in the coming weeks. Some will be easy, some will be challenging, many will ASTOUND you! The projects build on each other so you develop deeper and deeper expertise each week. One thing's for sure: you're going to have a lot of fun along the way.
 
-## IMPORTANT ANNOUNCEMENT - DECEMBER 2025 - PLEASE READ
+Any questions, please ask me on Udemy or at <ed@edwarddonner.com>. More details at the top of the course resources [here](https://edwarddonner.com/2024/11/13/llm-engineering-resources/).
 
-The course material has been completely refreshed with all new weeks. If you'd prefer to stick with the code for the original videos, simply do this from your Anaconda Prompt or Terminal:
-`git fetch`
-`git checkout original`
+### Answers to the most common questions
 
-Any questions, please ask me on Udemy or at <ed@edwarddonner.com>. More details at the top of the course resources [in the resources](https://edwarddonner.com/2024/11/13/llm-engineering-resources/).
+[My Cursor looks different to yours (new splash screen)](https://edwarddonner.com/avatar?q=54)  
+[Can I use Gemini or free models instead of OpenAI Yes!](https://edwarddonner.com/avatar?q=8)  
+[Where are the course resources](https://edwarddonner.com/2024/11/13/llm-engineering-resources/)
+[How does this course fit in with your others?](https://edwarddonner.com/curriculum)  
+[Can I take this course with no programming background?](https://edwarddonner.com/avatar?q=2)  
+[What job can I get after taking this course?](https://edwarddonner.com/avatar?q=3)  
 
 ### Before you begin
 
-I'm here to help you be most successful with your learning. If you hit any snafus, or if you have any ideas on how I can improve the course, please do reach out in the platform or by emailing me direct (<ed@edwarddonner.com>). It's always great to connect with people on LinkedIn to build up the community - you'll find me here:
+I'm here to help you be most successful with your learning. If you hit any snafus, or if you have any ideas on how I can improve the course, please do reach out in the platform or by emailing me direct (<ed@edwarddonner.com>). It's always great to connect with people on LinkedIn to build up the community - you'll find me here:  
 <https://www.linkedin.com/in/eddonner/>
-And this is new to me, but I'm also trying out X/Twitter at [@edwarddonner](https://x.com/edwarddonner) - if you're on X, please show me how it's done 😂
 
-Resources to accompany the course, including the slides and useful links, are here:
+And I'm starting to build a YouTube channel with extra content - please [check it out here](https://youtube.com/@edward.donner).  
+And this is new to me, but I'm also trying out X/Twitter at [@edwarddonner](https://x.com/edwarddonner) - if you're on X, please show me how it's done 😂  
+
+Resources to accompany the course, including the slides and useful links, are here:  
 <https://edwarddonner.com/2024/11/13/llm-engineering-resources/>
 
-And a useful FAQ with common questions is here:
-<https://edwarddonner.com/faq/>
+My digital twin that can answer common FAQ (and get me involved!) is here:  
+<https://edwarddonner.com/avatar/>
 
 ## Instant Gratification instructions for Week 1, Day 1 - with Llama 3.2 **not** Llama 3.3
 
@@ -36,19 +41,19 @@ We will start the course by installing Ollama so you can see results immediately
 
 1. Download and install Ollama from <https://ollama.com> noting that on a PC you might need to have administrator permissions for the install to work properly
 2. On a PC, start a Command prompt / Powershell (Press Win + R, type `cmd`, and press Enter). On a Mac, start a Terminal (Applications > Utilities > Terminal).
-3. Run `ollama run llama3.2` or for smaller machines try `ollama run llama3.2:1b` - **please note** steer clear of Meta's latest model llama3.3 because at 70B parameters that's way too large for most home computers!
-4. If this doesn't work: you may need to run `ollama serve` in another Powershell (Windows) or Terminal (Mac), and try step 3 again. On a PC, you may need to be running in an Admin instance of Powershell.
+3. Run `ollama run llama3.2` or for smaller machines try `ollama run llama3.2:1b` - **please note** steer clear of Meta's latest model llama3.3 because at 70B parameters that's way too large for most home computers!  
+4. If this doesn't work: you may need to run `ollama serve` in another Powershell (Windows) or Terminal (Mac), and try step 3 again. On a PC, you may need to be running in an Admin instance of Powershell.  
 5. And if that doesn't work on your box, I've set up this on the cloud. This is on Google Colab, which will need you to have a Google account to sign in, but is free:  <https://colab.research.google.com/drive/1-_f5XZPsChvfU1sJ0QqCePtIuc55LSdu?usp=sharing>
 
 Any problems, please contact me!
 
 ## Before the Setup instructions - a special note
 
-Early on in the course (on Day 2), I give a demo of a very cool, popular product called Claude Code. It's an AI coding tool, similar to Cursor that we use on the course. I'm only showing this as an example of Agentic AI in action; it's not a tool that's covered explicitly on this course, particularly as we're in Cursor. But if you want to use Claude Code yourself, the Quick Start guide from Anthropic is [on their website](https://docs.claude.com/en/docs/claude-code/quickstart).
+Early on in the course (on Day 2), I give a demo of a very cool, popular product called Claude Code. It's an AI coding tool, similar to Cursor that we use on the course. I'm only showing this as an example of Agentic AI in action; it's not a tool that's covered explicitly on this course, particularly as we're in Cursor. But if you want to use Claude Code yourself, the Quick Start guide from Anthropic is [here](https://docs.claude.com/en/docs/claude-code/quickstart).
 
 ## OK - now on to Setup instructions
 
-After we do the Ollama quick project, and after I introduce myself and the course, we get to work with the full environment setup.
+After we do the Ollama quick project, and after I introduce myself and the course, we get to work with the full environment setup.  
 
 Hopefully I've done a decent job of making these guides bulletproof - but please contact me right away if you hit roadblocks:
 
@@ -77,13 +82,13 @@ The mantra of the course is: the best way to learn is by **DOING**. I don't type
 
 You should be able to use the free tier or minimal spend to complete all the projects in the class. I personally signed up for Colab Pro+ and I'm loving it - but it's not required.
 
-Learn about Google Colab and set up a Google account (if you don't already have one) [on colab](https://colab.research.google.com/)
+Learn about Google Colab and set up a Google account (if you don't already have one) [here](https://colab.research.google.com/)
 
 The colab links are in the folders for Week 3 and Week 7 - if you open up the lab for each day, you'll find a direct link to the colab.
 
 ### Monitoring API charges
 
-You can keep your API spend very low throughout this course; you can monitor spend at the dashboards for [OpenAI](https://platform.openai.com/usage), for [Anthropic](https://console.anthropic.com/settings/cost).
+You can keep your API spend very low throughout this course; you can monitor spend at the dashboards: [here](https://platform.openai.com/usage) for OpenAI, [here](https://console.anthropic.com/settings/cost) for Anthropic.
 
 The charges for the exercsies in this course should always be quite low, but if you'd prefer to keep them minimal, then be sure to always choose the cheapest versions of models:
 
