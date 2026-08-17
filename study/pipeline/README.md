@@ -2,305 +2,144 @@
 
 > **New session? Read [`notes/HANDOFF.md`](../notes/HANDOFF.md) first.** It is the
 > single re-entry point: what the layers are, what is verified, what is still
-> open, and why. This README only covers how to run the pipeline.
+> open, and why. This README covers only how to run the pipeline and what it
+> actually does.
 
-Automated knowledge extraction pipeline for Ed Donner's LLM Engineering course. Extracts key concepts, code patterns, and business applications from 35+ Jupyter notebooks and organizes them into a searchable, topic-based knowledge base.
+Reads the course notebooks and the hand-written notes in [`../notes/`](../notes/),
+and writes the MkDocs content in `../docs/`. Everything in `../docs/` is build
+output except `index.md`.
 
-## Features
+## What it does, in five phases
 
-- **Automated Extraction**: Parse all course notebooks and extract structured content
-- **Topic Organization**: Content organized by topic (not chronologically) for easier review
-- **LLM Summarization**: Optional AI-powered summarization of key concepts
-- **Web Scraping**: Extract supplementary content from Ed Donner's website
-- **MkDocs Site**: Beautiful, searchable documentation site with Material theme
-- **Quick References**: Cheatsheets for syntax, common errors, and code snippets
-- **Week Summaries**: High-level overviews of what each week covers
+| Phase | Does | Notes |
+| --- | --- | --- |
+| 1. Extract | Parses every `weekN/*.ipynb` via `../nb2md.py` | Cached to `.cache/extracted.json` |
+| 2. Website | Scrapes edwarddonner.com | **Untested — see below** |
+| 3. Summarize | One LLM call per notebook | Only with `--use-llm` |
+| 4. Publish notes | Copies `../notes/` into `../docs/reference/` and `../docs/lectures/`, regenerates `../notes/lectures/INDEX.md` | |
+| 5. Generate | Week summaries, topic pages, site index | One LLM call per topic with `--use-llm` |
 
-## Quick Start
+## Running it
 
-### 1. Installation
-
-Dependencies are already installed. If you need to reinstall:
-
-```powershell
-cd study/pipeline
-pip install -r requirements.txt
-```
-
-### 2. Regenerate the Site
-
-Rebuild every page from the cached extraction and the hand-written notes:
-
-```powershell
-python study/pipeline/extract_all.py --generate-only
-```
-
-### 3. Extract Course Content
-
-Extract from all notebooks (no LLM summarization):
-
-```powershell
-python study/pipeline/extract_all.py
-```
-
-Extract specific weeks:
-
-```powershell
-python study/pipeline/extract_all.py --weeks 1,2,3
-```
-
-### 4. View the Knowledge Base
-
-Build and serve the MkDocs site:
-
-```powershell
-cd study
-python -m mkdocs serve
-```
-
-Then open http://localhost:8000 in your browser.
-
-## Usage Options
-
-### Basic Extraction (Fast, No AI)
-
-```powershell
-python study/pipeline/extract_all.py
-```
-
-This will:
-- Extract all notebooks (structure, code, concepts)
-- Generate week summaries
-- Generate topic pages from the extracted notebooks
-- Publish the hand-written primary-source references to docs/reference/
-- No LLM calls = instant and free
-
-### With Local AI (FREE, Best Option!)
-
-```powershell
-# First time: Install Ollama and pull a model
-# Visit https://ollama.com to download
-ollama pull llama3.2
-
-# Then run extraction with local AI
-python study/pipeline/extract_all.py --use-llm --provider ollama
-
-# Or specify a different model
-python study/pipeline/extract_all.py --use-llm --provider ollama --model qwen2.5
-```
-
-**Recommended local models:**
-- `llama3.2` - Fast, good quality (3B parameters)
-- `qwen2.5` - Better reasoning (7B parameters)  
-- `mistral` - Excellent for code (7B parameters)
-- `llama3.1` - Most capable (8B parameters)
-
-Pull any model: `ollama pull <model-name>`
-
-### With LLM Summarization - FREE with Ollama! 🎉
-
-**Option A: Local Model (FREE, requires Ollama)**
-
-```powershell
-# 1. Install Ollama from https://ollama.com
-# 2. Pull a model (recommended: llama3.2 or qwen2.5)
-ollama pull llama3.2
-
-# 3. Run extraction with local model
-python study/pipeline/extract_all.py --use-llm --provider ollama
-```
-
-**Option B: Paid APIs (Better quality, faster)**
-
-```powershell
-# OpenAI (~$5-10 for full course)
-python study/pipeline/extract_all.py --use-llm --provider openai
-
-# Anthropic Claude (~$10-15 for full course)
-python study/pipeline/extract_all.py --use-llm --provider anthropic
-```
-
-Both add:
-- AI-powered summarization of concepts
-- Automated topic classification
-- Quick-reference generation
-- Extract key troubleshooting information
-
-### Skip Website Scraping
-
-```powershell
+```bash
+# regenerate everything from the notebooks (free, no LLM) - the usual command
 python study/pipeline/extract_all.py --skip-website
+
+# pages only, from the cached extraction - fast, and what you want after
+# editing anything in study/notes/
+python study/pipeline/extract_all.py --generate-only
+
+# one week at a time
+python study/pipeline/extract_all.py --weeks 5,6 --skip-website
+
+# tests
+python -m unittest discover -s study/pipeline -t study/pipeline
+
+# read the site
+cd study && python -m mkdocs serve
 ```
 
-### Extract Specific Weeks
+`mkdocs build --strict` must stay clean. It is the only thing that catches a
+cross-link broken while moving content between layers, so run it before
+committing.
 
-```powershell
-python study/pipeline/extract_all.py --weeks 5,6,7
+The pipeline finds the repo root by walking up for a directory holding both
+`.git` and `study/`, so it runs from any working directory.
+
+## What is unproven — read before trusting output
+
+**`--use-llm` has never been run against the current topic-page path.** It is
+wired: one `generate_topic_summary` call per topic, 18 calls. Nothing has
+validated the output or the cost. Try Ollama first — it is free.
+
+```bash
+ollama serve                 # in another terminal
+ollama pull llama3.2
+python study/pipeline/extract_all.py --use-llm --provider ollama --skip-website
 ```
 
-## Directory Structure
+Defaults per provider: `ollama` → `llama3.2`, `openai` → `gpt-4.1-mini`,
+`anthropic` → `claude-3-5-sonnet-20241022`. Override with `--model`.
+
+The cost figure the run prints for paid providers is a rough
+`tokens × rate` estimate with rates hardcoded in `summarize_phase` — treat it as
+an order of magnitude, not a bill.
+
+**Website scraping is untested.** `extract_website_phase` warns and continues on
+failure by default; `--strict-website` makes it fail loudly. Nobody knows whether
+it has ever worked. `--skip-website` is the honest default.
+
+**`docs/quick-ref/*` and `docs/projects/*` are placeholders.** No generator
+writes them. They are hand-editable files that nothing overwrites, which also
+means nothing keeps them true.
+
+**Three `LLMSummarizer` methods are dead code** — `generate_quickref_entry`,
+`extract_troubleshooting_info` and `classify_topic` have no caller. Delete them
+or wire them up; leaving them reads as capability the pipeline does not have.
+
+## Layout
 
 ```text
 study/
 ├── notes/                   # Hand-written. The pipeline reads these.
 ├── pipeline/
 │   ├── src/
-│   │   ├── extractors/      # Notebook and web content extraction
-│   │   ├── processors/      # LLM summarization
-│   │   └── generators/      # Content generation, reference and lecture sync
-│   ├── templates/           # Jinja2 templates for markdown pages
-│   ├── config/
-│   │   └── taxonomy.yaml    # Topic organization structure
+│   │   ├── extractors/      # nb2md_loader, notebook_extractor, web_scraper
+│   │   ├── processors/      # llm_summarizer
+│   │   └── generators/      # content_generator, reference_sync, lecture_sync
+│   ├── templates/           # Jinja2: topic_page.md.j2, quickref.md.j2
+│   ├── config/taxonomy.yaml # Topics, and which reference is authoritative for each
 │   ├── test_extraction.py
-│   └── extract_all.py       # Main pipeline script
-├── docs/                    # Generated markdown content
-│   ├── index.md             # Main page with navigation
-│   ├── reference/           # Copies of notes/01-…08-*.md
-│   ├── lectures/            # Copies of notes/lectures/
-│   ├── topics/              # Topic pages built from the notebooks
-│   ├── quick-ref/           # Cheatsheets and quick references
-│   ├── week-summaries/      # Week-by-week summaries
-│   └── projects/            # Project guides
+│   └── extract_all.py
+├── docs/                    # Generated. reference/ and lectures/ mirror notes/.
 ├── nb2md.py                 # The repo's single notebook parser
-├── mkdocs.yml               # MkDocs configuration
-└── _site/                   # Built static site (gitignored)
+├── mkdocs.yml
+└── _site/                   # Rendered HTML, gitignored
 ```
 
-## Workflow
+## Changing things
 
-### Initial Setup (One-time, ~1 hour)
-
-1. Run the extraction pipeline on all weeks
-2. Review the generated topic pages against their primary-source references
-3. Build the MkDocs site
-
-### Ongoing Maintenance (After each session, ~15 min)
-
-1. Extract newly attended week:
-   ```powershell
-   python study/pipeline/extract_all.py --weeks 6
-   ```
-
-2. Add personal notes to relevant topic pages
-
-3. Rebuild site:
-   ```powershell
-   cd study
-   python -m mkdocs build
-   ```
-
-## Customization
-
-### Add New Topics
-
-Edit `study/pipeline/config/taxonomy.yaml`:
+**Add a topic:** append to `config/taxonomy.yaml`, then `--generate-only`. Add a
+`reference:` key naming a published slug if a hand-written reference covers it;
+without one the page says so rather than implying authority it lacks.
 
 ```yaml
-topics:
   - id: new-topic-id
     name: New Topic Name
-    category: category-name
-    folder: 01-foundations
-    description: Topic description
+    category: core-concepts
+    folder: 02-core-concepts
+    description: What it covers
     weeks: [1, 2]
+    reference: llm-foundations
 ```
 
-Then regenerate:
+A topic also needs a nav entry in `../mkdocs.yml`, or the strict build reports
+the page as unlisted.
 
-```powershell
-python study/pipeline/extract_all.py --generate-only
-```
+**Publish a new reference:** add it to `REFERENCE_NOTES` in
+`src/generators/reference_sync.py` and to the nav. Files in `../notes/` that are
+not listed stay unpublished, so drafts can sit there safely.
 
-### Modify Templates
+**Change page shape:** edit the Jinja2 templates in `templates/`.
 
-Edit Jinja2 templates in `study/pipeline/templates/`:
-- `topic_page.md.j2` - Comprehensive topic pages
-- `quickref.md.j2` - Quick reference cheatsheets
-
-### Customize MkDocs Theme
-
-Edit `study/mkdocs.yml` to change:
-- Colors and theme
-- Navigation structure  
-- Plugins and extensions
-- Search configuration
-
-## Testing
-
-Test extraction on a single week:
-
-```powershell
-cd study/pipeline
-python test_extraction.py
-```
-
-## Cost Estimation
-
-**Basic extraction**: $0 (no AI)
-
-**With Ollama (local AI)**: $0 (FREE - runs on your computer)
-- Requires: ~4-8GB RAM for the model
-- Speed: Depends on your hardware (slower than cloud APIs but free)
-- Quality: Very good for educational content
-
-**With OpenAI API**:
-- Estimated tokens: ~500K-1M (with prompt caching)
-- Model: GPT-4.1-mini ($0.15 per 1M tokens)
-- **Total cost: $5-10 one-time**
-- Ongoing: ~$1-2 per week for new content
-
-**With Anthropic API**:
-- Model: Claude 3.5 Sonnet
-- **Total cost: ~$10-15 one-time**
+**Narration filtering:** the course notebooks are conversational, so raw headings
+yield things like "Donezo! On to Step 2" as learning objectives. `is_narration()`
+in `src/extractors/notebook_extractor.py` filters them. It is a heuristic — add
+new patterns to `NARRATION_PREFIXES` / `NARRATION_SUBSTRINGS` **with a test
+case**.
 
 ## Troubleshooting
 
-### No notebooks found
+**No notebooks found.** The root walk needs a directory containing both `.git`
+and `study/`. Check you are inside the repo.
 
-Check that you're running from the correct directory (should be `llm_engineering/`):
+**A lecture note is missing from `INDEX.md`.** Its filename does not match
+`NNN-slug.md`. Off-template names are skipped without an error — see
+[`../notes/LECTURE-DISTILL.md`](../notes/LECTURE-DISTILL.md) §5.
 
-```powershell
-cd C:\Users\Pazzucconibt\REPO\llm_engineering
-python study/pipeline/extract_all.py
-```
+**`mkdocs build --strict` fails on a link.** Most often a reference cross-link
+pointing at a filename that is not a published slug. `rewrite_cross_links()` maps
+source stems and `aliases` onto slugs; add the missing alias.
 
-### MkDocs build errors
-
-Missing week summary files are normal before extraction. Warnings are OK; errors need fixing.
-
-### API key errors
-
-Ensure `.env` file contains:
-```
-OPENAI_API_KEY=sk-proj-...
-```
-
-## Next Steps
-
-1. **Run full extraction**: Extract all 8 weeks to populate content
-2. **Manual enhancement**: Review and improve key topic pages
-3. **Add diagrams**: Create architecture diagrams for complex topics (RAG, Agents)
-4. **Personal notes**: Add insights from attended sessions
-5. **Deploy (optional)**: Publish to GitHub Pages:
-   ```powershell
-   cd study
-   python -m mkdocs gh-deploy
-   ```
-
-## Maintenance Schedule
-
-**Weekly** (15 min):
-- Extract newly attended sessions
-- Add personal notes
-- Quick validation
-
-**Monthly** (1 hour):
-- Review automated summaries
-- Enhance one topic area with examples/diagrams
-- Update troubleshooting based on issues encountered
-
-## Legal
-
-This is a personal study aid. All content is paraphrased and reorganized for educational purposes. Course materials are not redistributed.
-
-Original course: https://edwarddonner.com/
+**Unicode errors on Windows.** Console output is deliberately ASCII-only; a
+cp1252 terminal crashes on `✓`. Keep it that way.

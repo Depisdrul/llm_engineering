@@ -92,7 +92,9 @@ Per lecture, the cycle is about two minutes of your time:
 
 **Batching:** do a run of 5–10 lectures in one sitting, then let a local session in the repo do the integration pass (§6). Don't interleave distillation and integration — they need different attention.
 
-**The browser session runs this as a skill.** That skill is not stored in this repo, so it can drift from this file without anything flagging it. **This file is the contract** — where the two disagree, this file wins, and the skill is what should change. If you edit the skill, mirror the change here; §4's template and §5's filename rule in particular are what the local index generator parses, and a note that doesn't match them is skipped silently.
+**The distillation runs as a skill**, `course-distill`, kept at `.claude/skills/course-distill/` in this repo so it is version-controlled next to the spec it implements. The browser session holds its own copy at `claude.ai/customize/skills`; those two copies can drift and nothing will flag it.
+
+**This file is the contract.** Where it and the skill disagree, this file wins — it is what `study/pipeline/` is written against. §4's template and §5's filename rule in particular are parsed by the index generator, and a note matching neither is skipped silently. If you edit the skill in the browser, mirror it into the repo copy in the same sitting.
 
 **Rules for the session doing the distilling:**
 
