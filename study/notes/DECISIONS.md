@@ -15,6 +15,7 @@ claims, and the uncomfortable point first.
 | Verified facts about the course repo | `.claude/skills/course-distill/references/repo-facts.md` |
 | The distillation workflow | `.claude/skills/course-distill/SKILL.md` |
 | Where lecture notes go and how they publish | [`LECTURE-DISTILL.md`](LECTURE-DISTILL.md) |
+| Which days are worth distilling first | [`SLIDE-COVERAGE.md`](SLIDE-COVERAGE.md) |
 | What is still unresolved | [`OPEN-QUESTIONS.md`](OPEN-QUESTIONS.md) |
 
 ---
@@ -161,7 +162,8 @@ would conflict on every future upstream merge.
 1. **Run the distillation loop.** Everything built so far is scaffolding for it.
    The concept-only lectures are the ones worth doing — they are the ones with no
    other source. 208 lectures remain; you do not need them all. Lectures 109 and
-   110 were watched but skipped.
+   110 were watched but skipped. [`SLIDE-COVERAGE.md`](SLIDE-COVERAGE.md) ranks the
+   days by how much they teach that no other source records.
 2. **Answer the two cheap items in `OPEN-QUESTIONS.md`** — the token size of
    `week5/knowledge-base/`, and whether the OpenAI fine-tuning account is
    blocked. Both change what you do next, and both take minutes.
