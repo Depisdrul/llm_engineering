@@ -4,8 +4,8 @@ Everything added to this fork of Ed Donner's LLM Engineering course. Nothing
 outside this folder is modified, so the diff against upstream stays separable and
 `git log -p study/` is the whole history of the work.
 
-**Start with [`notes/HANDOFF.md`](notes/HANDOFF.md)** — it is the re-entry point:
-what the layers are, what has been verified, what is still open, and why.
+**Start with [`notes/DECISIONS.md`](notes/DECISIONS.md)** — the standing record of
+why things are shaped the way they are, and where everything else lives.
 
 | | |
 | --- | --- |

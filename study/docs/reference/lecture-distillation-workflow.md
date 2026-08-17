@@ -24,7 +24,7 @@ block, which is the whole reason this exists.
 
 ```text
 study/notes/
-  HANDOFF.md                             ← re-entry point; read it first
+  DECISIONS.md                           ← why this is shaped this way
   01-llm-foundations.md                  ← topic references, the durable layer
   04-model-selection-benchmarks-leaderboards.md
   05-rag-and-vector-search.md

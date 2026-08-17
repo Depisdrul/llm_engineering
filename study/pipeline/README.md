@@ -1,8 +1,8 @@
 # study/pipeline — the extraction pipeline
 
-> **New session? Read [`notes/HANDOFF.md`](../notes/HANDOFF.md) first.** It is the
-> single re-entry point: what the layers are, what is verified, what is still
-> open, and why. This README covers only how to run the pipeline and what it
+> **New session? Read [`study/README.md`](../README.md) to orient, then
+> [`notes/DECISIONS.md`](../notes/DECISIONS.md) for why things are shaped the way
+> they are.** This README covers only how to run the pipeline and what it
 > actually does.
 
 Reads the course notebooks and the hand-written notes in [`../notes/`](../notes/),
@@ -135,7 +135,7 @@ and `study/`. Check you are inside the repo.
 
 **A lecture note is missing from `INDEX.md`.** Its filename does not match
 `NNN-slug.md`. Off-template names are skipped without an error — see
-[`../notes/LECTURE-DISTILL.md`](../notes/LECTURE-DISTILL.md) §5.
+[`../notes/LECTURE-DISTILL.md`](../notes/LECTURE-DISTILL.md) §2.
 
 **`mkdocs build --strict` fails on a link.** Most often a reference cross-link
 pointing at a filename that is not a published slug. `rewrite_cross_links()` maps
